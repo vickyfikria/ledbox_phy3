@@ -19,11 +19,9 @@ this will return SimpleXML which means simple XML installed
 ...
 ...
 
-DocumentRoot /var/www/html
-
-DocumentRoot /home/pi/ledbox/www
-
-DirectoryIndex index.php
+    #DocumentRoot /var/www/html
+    DocumentRoot /home/pi/ledbox/www
+    DirectoryIndex index.php
 
 </VirtualHost>
 ```
