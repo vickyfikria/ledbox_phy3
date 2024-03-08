@@ -7,6 +7,7 @@ Because /ledbox/www use `simplexml_load_file()` that might cause exception , nee
 currently php version is 8.2, so :
 
 `sudo apt-get install php 8.2-xml`
+
 `php -m | grep SimpleXML`
 this will return SimpleXML which means simple XML installed
 
