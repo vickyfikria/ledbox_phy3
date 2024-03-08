@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<layout name="escoresheet_matchscore_timeout_02">
+	<section type="text" name="set1" x="93" y="0" fontsize="18" color="255,255,255" align="right" animation="10">0</section>
+	
+	
+	
+	<section type="rectangle" name="serve1" x="68" y="60" src="" width="16" height="5" color="0,0,0"></section>
+	<section type="rectangle" private="true" name="bg_score1" x="0" y="0" width="64" height="63" bordercolor="255,255,255"></section>
+	<section type="text" name="score1" x="32" y="2" fontsize="55" color="255,255,255" align="center" animation="10">0</section>
+	
+	
+	
+	
+	<section type="text" name="set2" x="100" y="0"  fontsize="18" color="255,255,255" align="left">0</section>
+	
+	
+	
+	<section type="rectangle" name="serve2" x="107" y="60" src="" width="16" height="5" color="0,0,0"></section>
+	<section type="rectangle" private="true" name="bg_score2" x="127" y="0" width="64" height="63" bordercolor="255,255,255"></section>
+	<section type="text" name="score2" x="160" y="2" fontsize="55" color="255,255,255" align="center" animation="10">0</section>
+	
+	<section type="text" name="lbl" x="96" y="20" fontsize="13" color="255,255,255" align="center">TIMEOUT</section>
+	<section type="text" name="timer" x="96" y="35" fontsize="25" color="255,255,255" align="center"></section>
+	
+	
+	
+
+</layout>
+

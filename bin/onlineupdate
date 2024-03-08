@@ -1,0 +1,22 @@
+#!/bin/bash
+source bash-ini-parser
+
+URL=$(curl -s 'http://ledbox.tech4sport.com/service.php?auth=bGVkYm94OkYwcURUY1h3TW5IOG56bjg=&task=getUpdates' | \
+python -c "import sys, json; print(json.load(sys.stdin)['file'])")
+
+VERSION=$(curl -s 'http://ledbox.tech4sport.com/service.php?auth=bGVkYm94OkYwcURUY1h3TW5IOG56bjg=&task=getUpdates' | \
+python -c "import sys, json; print(json.load(sys.stdin)['version'])")
+
+
+wget -O ../update.zip $URL
+unzip -o ../update.zip -d ../
+
+cfg_parser ../user_setting.ini
+cfg_section_GENERAL
+
+SERIAL_NUMBER=$device
+
+URL_NOTIFY="http://ledbox.tech4sport.com/service.php?auth=bGVkYm94OkYwcURUY1h3TW5IOG56bjg=&task=setUpgrade&serialnumber=$SERIAL_NUMBER&version_sw=$VERSION"
+
+wget $URL_NOTIFY -O /dev/null
+

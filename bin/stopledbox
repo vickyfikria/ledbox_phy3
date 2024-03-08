@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo killall python
+sudo cp /home/*/ledbox/bin/start.png ../www/buffer.png

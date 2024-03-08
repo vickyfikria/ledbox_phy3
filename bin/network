@@ -1,0 +1,17 @@
+#!/bin/bash
+cd /home/pi/ledbox/bin
+source bash-ini-parser
+
+cfg_parser ../user_setting.ini
+
+cfg_section_NETWORK
+MODE=$mode
+IP=$ip
+SUBNET=$subnet
+GATEWAY=$gateway
+
+if [ "$MODE" = "static" ]
+then
+    sudo ifconfig eth0 $IP netmask $SUBNET
+    sudo route add default gw $GATEWAY
+fi

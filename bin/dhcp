@@ -1,0 +1,15 @@
+
+#!/bin/bash
+
+
+ethstate="$(cat /sys/class/net/eth0/operstate)"
+
+if [ "$ethstate" = "up" ]
+then
+echo "Eth0 UP"
+sudo ifdown eth0
+sudo ifup eth0
+else
+echo "Eth0 DOWN"
+fi
+

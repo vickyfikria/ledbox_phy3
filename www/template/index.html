@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>LEDbox <serialnumber/></title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="template/plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="template/dist/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="template/dist/css/adminlte.min.css">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="template/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css"> 
+
+  <!-- Bootstrap Tree View -->
+  <link rel="stylesheet" href="template/plugins/bootstrap-treeview/2bootstrap-treeview.min.css"> 
+
+
+  <!-- Google Font: Source Sans Pro -->
+  <link href="template/dist/fonts/font.css" rel="stylesheet">
+  <!-- jQuery -->
+  <script src="template/plugins/jquery/jquery.min.js"></script>
+  <!-- jQuery UI 1.11.4 -->
+  <script src="template/plugins/jquery-ui/jquery-ui.min.js"></script>
+  <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+  
+  <!-- Bootstrap 4 -->
+  <script src="template/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap Color Picker -->
+  <script src="template/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
+  <!-- Bootstrap Tree View -->
+  <script src="template/plugins/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+
+  <!-- Prism Js -->
+  <script type="text/javascript" src="assets/js/prism.js"></script>
+  <link rel="stylesheet" href="assets/css/prism.css"> 
+
+  <script type="text/javascript" src="../remote/ledbox.js"></script>
+	<script type="text/javascript" src="assets/js/ws.js"></script>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+
+  </nav>
+  
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="index.php" class="brand-link">
+      <img src="template/dist/img/logo.png" alt="LEDbox" class="brand-image" style="opacity: .8">
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <center class="mt-2">
+        <canvas id="cbuffer" width="192" height="64"></canvas>
+        <img id="buffer" src="buffer.png" style="display:none;" />
+        
+        <span id="status_nd" class="badge badge-info">Checking...</span>
+			  <span id="status_active" style="display:none" class="badge badge-success">Active</span>
+			  <span id="status_notactive" style="display:none" class="badge badge-danger">Not active</span>
+			</center>
+
+
+
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <menu/>
+          
+         <li class="nav-header">
+           SERVICE
+         </li>
+         <li class="nav-item">
+          <a href="#" onclick="showWaiting();" class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <p>
+              Show Waiting
+            </p>
+          </a>
+        </li>
+        <li class="nav-item" >
+          <a href="#" onclick="showInfo();" class="nav-link">
+            <i class="nav-icon fas fa-info"></i>
+            <p>
+              Show Info
+            </p>
+          </a>
+        </li>
+         <li class="nav-item" id="runService">
+          <a href="#" onclick="runService();" class="nav-link">
+            <i class="nav-icon fas fa-play"></i>
+            <p>
+              Start
+            </p>
+          </a>
+        </li>
+        <li class="nav-item" id="closeService">
+          <a href="#" onclick="closeService();" class="nav-link">
+            <i class="nav-icon fas fa-stop"></i>
+            <p>
+              Stop
+            </p>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a href="#" onclick="restartService();" class="nav-link">
+            <i class="nav-icon fas fa-sync"></i>
+            <p>
+              Restart
+            </p>
+          </a>
+        </li>
+        <li class="nav-header">
+          SYSTEM
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="restartLED();" class="nav-link">
+            <i class="nav-icon fas fa-lightbulb"></i>
+            <p>
+              Restart LED
+            </p>
+          </a>
+        </li>
+         <li class="nav-item">
+          <a href="#" onclick="restartDHCP();" class="nav-link">
+            <i class="nav-icon fas fa-network-wired"></i>
+            <p>
+              Restart DHCP
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="reboot();" class="nav-link">
+            <i class="nav-icon fas fa-power-off"></i>
+            <p>
+              Reboot
+            </p>
+          </a>
+
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="disconnect();" class="nav-link">
+            <i class="nav-icon fas fa-sign-out-alt"></i>
+            <p>
+              Disconnect
+            </p>
+          </a>
+
+        </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+          <messagecontent/>
+            <bodycontent/>
+        <!-- /.row (main row) -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2020 <a href="http://www.tech4sport.com">Tech4Sport s.r.l.</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 1.0.0
+    </div>
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- AdminLTE App -->
+<script src="template/dist/js/adminlte.min.js"></script>
+
+<script type="text/javascript">
+var c = document.getElementById("cbuffer");
+var ctx = c.getContext("2d");
+
+setInterval(function() {
+    var myImageElement = document.getElementById('buffer');
+    myImageElement.src = 'buffer.png?rand=' + Math.random();
+    myImageElement.onload = function() {
+      ctx.drawImage(myImageElement, 0, 0, 192, 64, 0, 0, 192, 64);
+    }
+    getWs( "dashboard","testService", function( data ) {
+		  setStatus(data.value);  
+    });
+
+
+}, 2000);
+
+function showInfo(){
+  var message={}
+  message.cmd="SetLayout";
+  message.value="intro";
+  sendCommand(JSON.stringify(message));
+}
+
+function showWaiting(){
+  var message={}
+  message.cmd="SetLayout";
+  message.value="waiting";
+  sendCommand(JSON.stringify(message));
+}
+function restartService(){
+	getWs( "dashboard","closeService", function( data ) {
+    getWs( "dashboard","runService", function( data ) {});
+  });
+
+}
+
+function runService(){
+	getWs( "dashboard","runService", function( data ) {});
+
+}
+
+function closeService(){
+	getWs( "dashboard","closeService", function( data ) {});
+
+}
+
+
+function runLED(){
+	getWs( "dashboard","runLED", function( data ) {});
+
+}
+
+function closeLED(){
+	getWs( "dashboard","closeLED", function( data ) {});
+
+}
+
+function restartLED(){
+	getWs( "dashboard","closeLED", function( data ) {
+    getWs( "dashboard","runLED", function( data ) {});
+  });
+
+}
+
+
+function restartDHCP(){
+	getWs( "dashboard","restartDHCP", function( data ) {});
+
+}
+
+function reboot(){
+    if(confirm('Reboot LEDbox now?'))
+        document.location="index.php?view=dashboard&task=reboot";
+
+}
+
+function disconnect(){
+  document.location="index.php?view=dashboard&task=disconnect";
+}
+
+function setStatus(value){
+  $("#status_nd").hide();
+	if(value){
+	  $("#displaysection").show();
+	  $("#closeService").show();
+	  $("#runService").hide();
+	  $("#status_active").show();
+	  $("#status_notactive").hide();
+		
+	}else{
+	  $("#displaysection").hide();
+	  $("#closeService").hide();
+	  $("#runService").show();
+	$("#status_active").hide();
+	  $("#status_notactive").show();
+	}
+
+}
+
+</script>
+</body>
+</html>

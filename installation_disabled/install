@@ -1,0 +1,77 @@
+#!/bin/bash
+
+
+sudo chmod +x licence
+
+sudo service hostapd start
+
+echo $"First run LEDBox"
+echo $"----------------"
+echo ""
+echo $"1 - Generating licence"
+echo ""
+
+sudo /etc/init.d/flushBuffer stop
+sudo licence -gen
+sudo ../bin/startled &
+sudo cp setup.png ../www/buffer.png
+
+
+echo ""
+echo $"2 - Generating serial number"
+echo ""
+
+RESULT=$(python getserialnumber.py 2>&1)
+
+IFS=';'
+
+read -ra ADDR <<< "$RESULT"
+
+SERIALNUMBER=${ADDR[0]}
+PASSWORD=${ADDR[1]}
+
+
+if [ -z "$SERIALNUMBER" ]; then
+	echo "No serial number"
+	sudo cp error.png ../www/buffer.png
+	exit 0;
+else
+	
+	
+	echo $"3 - Updating parameters"
+	BLUETOOTH=Litescore_${SERIALNUMBER:1}
+	WIFI_AP_SSID=ledbox_$SERIALNUMBER
+	WIFI_AP_PASSWORD=$PASSWORD 
+	sudo hostnamectl set-hostname "$WIFI_AP_SSID"	
+	sudo sed -i "2i127.0.0.1 $WIFI_AP_SSID" /ect/hosts
+	cp hostapd.conf hostapd.conf1
+	cp user_setting.ini user_setting.ini1
+	
+	perl -p -i.bak -e 's/ssid=SSID/ssid='$WIFI_AP_SSID'/' hostapd.conf1
+	perl -p -i.bak -e 's/wpa_passphrase=PASSWORD/wpa_passphrase='$WIFI_AP_PASSWORD'/' hostapd.conf1
+	
+        perl -p -i.bak -e 's/name = BLUETOOTH/name = '$BLUETOOTH'/' user_setting.ini1
+	perl -p -i.bak -e 's/device = SERIALNUMBER/device = '$SERIALNUMBER'/' user_setting.ini1
+	perl -p -i.bak -e 's/psk_ap = PASSWORD_AP/psk_ap = '$WIFI_AP_PASSWORD'/' user_setting.ini1
+	perl -p -i.bak -e 's/ssid_ap = SSID_AP/ssid_ap = '$WIFI_AP_SSID'/' user_setting.ini1
+	
+	sudo mv user_setting.ini1 ../user_setting.ini
+	sudo mv hostapd.conf1 /etc/hostapd/hostapd.conf
+	
+	echo ""
+
+	echo "SSID WIFI AP: " $WIFI_AP_SSID
+	echo "PASSWORD WIFI AP: " $WIFI_AP_PASSWORD
+
+	
+
+fi
+
+
+sudo rm -r ../installation
+chmod +x ../bin/onlineupdate
+../bin/onlineupdate
+
+sudo reboot
+
+

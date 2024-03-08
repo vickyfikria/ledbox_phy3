@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <title>SpikeCheck</title>
+        <meta charset="utf-8">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+    </head>
+<body>
+    <div class="bg-secondary p-2">
+        <img src="images/logo.png" height="32" />
+    </div>
+    <section class="bg-dark">
+        <div class="container ">
+        
+            
+            <div class="img-zoom-container row ">
+                <div id="img-magnifier-container" class="col-md-12 text-center">
+                    <img id="myimage" style="width:100%;" />
+                    <div style="display:none";>
+                        <input id="mouseX" type="text"  />
+                        <input id="mouseY" type="text"/>
+                    </div>
+                </div>
+                
+                <div id="zoom_panel" class="col-md-12" style="text-align:center;display: none;">
+                    <label class="alert alert-info" id="statusMessage"></label>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section >
+        <div class="container pt-2 ">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <label class="alert alert-success">Ultima schiacciata rilevata: <strong><span id="smashFinded">nd</span></strong> mt</label>
+                    <button class="btn btn-primary" onclick="setField()">Imposta area di analisi</button>
+
+                    <button class="btn btn-success btn-sm" onclick="confirm_pick()">OK</button>
+
+                    <button class="btn btn-success btn-sm" onclick="getHeight()">OK point</button>
+
+
+                    <button class="btn btn-sm" onclick="move(-1,0);"><-</button>
+                    <button class="btn btn-sm" onclick="move(1,0);">-></button>
+                    <button class="btn btn-sm" onclick="move(0,1);">^</button>
+                    <button class="btn btn-sm" onclick="move(0,-1);">v</button>
+                    
+                    
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <section class="bg-light p-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" onclick="show_background(this)" id="customSwitch2">
+                        <label class="custom-control-label" for="customSwitch2">Debug</label>
+                    </div>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" onclick="setGetHeight(this)" id="customSwitch3">
+                        <label class="custom-control-label" for="customSwitch3">Get Height</label>
+                    </div>
+                </div>
+                
+                
+            </div>
+            
+        
+            <fieldset id="panel_calibration_fields">
+                <div class="form-group">
+                    <label>Sorgente video</label>
+                    <select class="form-control" id="cameras" onchange="setCamera()">
+                    </select>
+
+                    
+                    <input type="text" class="form-control" id="video" placeholder="rtsp://192.168.43.1:8080/h264_ulaw.sdp" value="" />
+
+
+                    <input type="hidden" id="video" value="" />
+
+                </div>
+
+                <div class="form-group">
+                    <label>Risoluzione camera</label>
+                    <select class="form-control" id="resolution" onchange="setCamera()">
+                        <option value="1920_1080">1920 x 1080</option>
+                        <option value="1280_960">1280 x 960</option>
+                        <option value="1024_768">1024 x 768</option>
+                        <option value="720_640" selected="selected">720 x 640</option>
+                        <option value="640_480">640 x 480</option>
+                        <option value="320_240">320 x 240</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Diametro palla (m)</label>
+                    <input class="form-control" type="text" id="diameter_ball" value="0.30" />
+                </div>
+
+                <div class="form-group">
+                    <label>% diametro palla (dm)</label>
+                    <input class="form-control" type="text" id="delta_diameter_ball" value="0.3" />
+                </div>
+
+                <div class="form-group">
+                    <label>numero punti</label>
+                    <input class="form-control" type="text" id="num_points" value="5" />
+                </div>
+
+                <div class="form-group">
+                    <label>Angolo min</label>
+                    <input class="form-control" type="text" id="angle_min" value="150" />
+                </div>
+
+                <div class="form-group">
+                    <label>Angolo max</label>
+                    <input class="form-control" type="text" id="angle_max" value="40" />
+                </div>
+
+
+                <div class="form-group">
+                    <label>Altezza rete (m)</label>
+                    <input class="form-control" type="text" id="net_height" value="2.43" />
+                </div>
+                <div class="form-group">
+                    <label>Altezza schiacciata max (m)</label>
+                    <input class="form-control" type="text" id="max_height" value="4.00" />
+                </div>
+                <div class="form-group">
+                    <label>Altezza schiacciata min (m)</label>
+                    <input class="form-control" type="text" id="min_height" value="2.00" />
+                </div>
+                
+                <button class="btn btn-success" onclick="saveCalibration()">Salva</button>
+            </fieldset>
+        
+        </div>
+    </section>
+    
+    <footer class="bg-secondary mt-5">
+        <div class="container text-center">
+            <label>Tech4Sport s.r.l. - @Copyright 2020 </label>
+        </div>
+
+
+    </footer>
+
+
+    <script type="text/javascript">
+        
+        
+        const PROCESS_RUN=1;
+        const PROCESS_NOT_RUN=0;
+        const PROCESS_PAUSE=2;
+
+
+        var state=PROCESS_NOT_RUN;
+
+        var pole1=[];
+        var pole2=[];
+        var line_ground=[];
+
+        var getUrl = window.location;
+        var ws = new WebSocket('ws://'+getUrl.host+':8886/command');
+        var streaming = new WebSocket('ws://'+getUrl.host+':8886/videostreaming');
+        
+        ws.onopen= function(event){
+            var message={};
+            message.cmd="Connect";
+            
+            ws.send(JSON.stringify(message));
+        };
+
+        streaming.onmessage=function(event){
+            var b64=event.data;
+             $("#myimage").attr("src","data:image/png;base64,"+b64);
+        }
+
+        
+
+
+
+        ws.onmessage = function(event){
+            console.log("messaggio ricevuto");
+
+
+                var message=JSON.parse(event.data);
+                
+                
+                
+                if("cmd" in message)
+                    switch(message.cmd){
+                        case "Smash":
+                            $("#smashFinded").html(parseFloat(message.value.height).toFixed(2));
+                            break;
+
+                    }
+                
+                if("sender" in message)
+                    switch(message.sender){
+                        case "Connect":
+                            $("#resolution").val(message.value.camera_width+"_"+message.value.camera_height);
+                            $("#diameter_ball").val(message.value.diameter_ball);
+                            $("#net_height").val(message.value.net_height);
+                            $("#max_height").val(message.value.max_height);
+                            $("#min_height").val(message.value.min_height);
+                            $("#cameras").empty();
+                            for(var i=0;i<message.value.cameras;i++){
+                                $("#cameras").append("<option value='"+i+"'>Webcam "+(i+1)+"</option>");
+                            }
+
+                            //setField();
+                            setCamera();
+                            break;
+
+                        case "Run":
+                            $("#btn_run").hide();
+                            $("#btn_pause").show();
+                            $("#btn_stop").show();
+                            break;
+                        case "Analyze":
+                            if(message.value==false){
+                                alert("Impostare l'area di analisi");
+                            }
+                            break;
+                        case "Pause":
+                            $("#btn_run").show();
+                            $("#btn_pause").hide();
+                            $("#btn_stop").show();
+                            break;
+                        case "Stop":
+                            $("#btn_run").show();
+                            $("#btn_pause").hide();
+                            $("#btn_stop").hide();
+                            break;
+                        case "getHeight":
+                            alert(message.value);
+                            break;
+
+
+                    }
+            
+            
+
+
+
+
+
+
+
+
+            console.log(event.data);
+        }
+
+
+        /*
+        var c = document.getElementById("myimage");
+        var ctx = c.getContext("2d");
+
+        setInterval(function() {
+            var myImageElement = document.getElementById('buffer');
+            myImageElement.src = 'http://'+getUrl.host+'/spikecheck/buffer.jpg?rand=' + Math.random();
+            
+            myImageElement.onload = function() {
+                ctx.drawImage(myImageElement, 0, 0, 400, 225, 0, 0, 400, 225);
+            /*
+                //disegna la riga della rete
+                if(pole1.length>0 && pole2.length>0){
+                    ctx.beginPath();
+                    ctx.moveTo(parseInt(pole1[0].x), parseInt(pole1[0].y));
+                    ctx.lineTo(parseInt(pole2[0].x), parseInt(pole2[0].y))
+                    ctx.stroke();
+                    if(pole1.length>1){
+                        ctx.beginPath();
+                        ctx.moveTo(parseInt(pole1[0].x), parseInt(pole1[0].y));
+                        ctx.lineTo(parseInt(pole1[1].x), parseInt(pole1[1].y))
+                        ctx.stroke();
+                    }
+
+                    if(pole2.length>1){
+                        ctx.beginPath();
+                        ctx.moveTo(parseInt(pole2[0].x), parseInt(pole2[0].y));
+                        ctx.lineTo(parseInt(pole2[1].x), parseInt(pole2[1].y))
+                        ctx.stroke();
+                    }
+
+                }
+
+                if(line_ground.length>1){
+                    ctx.beginPath();
+                    ctx.moveTo(parseInt(line_ground[0].x), parseInt(line_ground[0].y));
+                    ctx.lineTo(parseInt(line_ground[1].x), parseInt(line_ground[1].y))
+                    ctx.stroke();
+                }
+            }
+            
+        }, 100);*/
+        
+        /*
+        function Run(){
+            
+            msg={};
+            msg.cmd="Analyze"
+            command=JSON.stringify(msg);
+            ws.send(command);
+            state=PROCESS_RUN;
+
+
+        }
+
+        function Stop(){
+            msg={};
+            msg.cmd="Stop"
+            command=JSON.stringify(msg);
+            ws.send(command);
+            state=PROCESS_NOT_RUN;
+        }
+
+        function Pause(){
+            msg={};
+            msg.cmd="Pause"
+            command=JSON.stringify(msg);
+            ws.send(command);
+            state=PROCESS_PAUSE;
+        }*/
+
+
+        function calculateIntersectionPoleLineGround(x){
+            deltay=line_ground[0].y-line_ground[1].y;
+            deltax=line_ground[1].x-line_ground[0].x;
+            m=(deltay/deltax);
+            q = parseInt(line_ground[0].y);
+            y=-1*m*(x-line_ground[0].x)+q;
+            return parseInt(y);
+
+        }
+
+        function calibrate(obj){
+
+            var status=$(obj).prop("checked");
+
+            if(status){
+                
+                $("#panel_calibration_fields").show();
+            }else{
+                $("#zoom_panel").hide();
+                $("#panel_calibration_fields").hide();
+                return;
+            }
+
+
+        }
+
+
+        function show_background(obj){
+            var status=$(obj).prop("checked");
+            var message={};
+            message.cmd="ShowBackground"
+            var value={};
+            value.status=status;
+            message.value=value;
+            ws.send(JSON.stringify(message));
+        }
+
+        function setGetHeight(obj){
+            var status=$(obj).prop("checked");
+            if(status){
+                magnify("myimage", 3);
+            }else{
+                removeMagnify();
+            }
+        }
+
+
+        function setField(){
+
+            $("#zoom_panel").show();
+
+            pole1=[];
+            pole2=[];
+            line_ground=[];
+            pole1.length=0;
+            pole2.length=0;
+            line_ground.length=0;
+
+            
+            $("#statusMessage").html("Seleziona l'incrocio tra la <strong>prima asta</strong> e la rete");
+           
+            magnify("myimage", 3);
+
+            
+        }
+
+
+        function getHeight(){
+            var message={};
+            message.cmd="getHeight";
+            var p={};
+            p.x=toRelative($("#mouseX").val()).toString();
+            p.y=toRelative($("#mouseY").val(),false).toString();
+
+            message.value=p;
+
+            ws.send(JSON.stringify(message));    
+        }
+
+
+        function confirm_pick(){
+
+        //$("#img-magnifier-container").on("mousedown",function(event){
+                if(pole1.length==0){
+                    var p={};
+                    p.x=$("#mouseX").val();
+                    p.y=$("#mouseY").val();
+                    pole1.push(p);
+                    $("#statusMessage").html("Seleziona l'incrocio tra la <strong>seconda asta</strong> e la rete");
+                }else{
+                    if(pole2.length==0){
+                        var p={};
+                        p.x=$("#mouseX").val();
+                        p.y=$("#mouseY").val();
+                        pole2.push(p);
+                        $("#statusMessage").html("Seleziona il punto di base del <strong>primo palo</strong>");
+                    }else{
+                        if(line_ground.length==0){ 
+                            var p={};
+                            p.x=$("#mouseX").val();
+                            p.y=$("#mouseY").val();
+                            line_ground.push(p);
+                            $("#statusMessage").html("Seleziona il punto di base del <strong>secondo palo</strong>");
+                        
+                        }else{
+                            var p={};
+                            p.x=$("#mouseX").val();
+                            p.y=$("#mouseY").val();
+                            line_ground.push(p);
+                            
+                            p={};
+                            p.x=line_ground[0].x;
+                            p.y=calculateIntersectionPoleLineGround(pole1[0].x).toString();
+                            pole1.push(p);
+
+                            p={};
+                            p.x=line_ground[1].x;
+                            p.y=calculateIntersectionPoleLineGround(pole2[0].x).toString();
+                            pole2.push(p);
+                            $("#statusMessage").html("Calibrazione completata");
+                            $("#zoom_panel").hide();
+                            removeMagnify();
+                            var p_netheight=prompt("Inserisci l'altezza del primo palo (m)",$("#net_height").val())
+                            if(p_netheight!=null){
+                                $("#net_height").val(p_netheight);
+                                saveCalibration();
+                            }
+
+                        }
+                    }
+                }
+
+
+
+            }
+
+        function toRelative(absolute,isX=true){
+            var w=$("#myimage").width();
+            var h=$("#myimage").height();
+
+            if(isX){
+                return parseInt(absolute)/w;
+            }else{
+                return parseInt(absolute)/h;
+            }
+
+        }
+
+        function saveCalibration(){
+            //crea il messaggio da inviare a SmashFinder
+            ws.send(createMessageCalibrate());
+        }
+
+        function createMessageCalibrate(){
+            var msg={};
+            msg.cmd="Calibrate";
+            var value={};
+            value.pole1={};
+            value.pole1.x1=toRelative(pole1[0].x).toString();
+            value.pole1.y1=toRelative(pole1[0].y,false).toString();
+            value.pole1.x2=toRelative(pole1[1].x).toString();
+            value.pole1.y2=toRelative(pole1[1].y,false).toString();
+
+            value.pole2={};
+            value.pole2.x1=toRelative(pole2[0].x).toString();
+            value.pole2.y1=toRelative(pole2[0].y,false).toString();
+            value.pole2.x2=toRelative(pole2[1].x).toString();
+            value.pole2.y2=toRelative(pole2[1].y,false).toString();
+
+            
+            value.net_height=($("#net_height").val());
+            value.max_height=($("#max_height").val());
+            value.min_height=($("#min_height").val());
+            value.diameter_ball=($("#diameter_ball").val());
+            value.delta_diameter_ball=($("#delta_diameter_ball").val());
+            value.num_points=($("#num_points").val());
+
+            value.angle_min=($("#angle_min").val());
+            value.angle_max=($("#angle_max").val());
+            
+
+            msg.value=value;
+
+
+
+            return JSON.stringify(msg);
+            
+
+        }
+
+        function removeMagnify(){
+            $(".img-magnifier-glass").remove();
+        }
+        var img, glass, w, h, bw;
+
+        
+
+        function magnify(imgID, zoom) {
+          
+          img = document.getElementById(imgID);
+
+          /* Create magnifier glass: */
+          glass = document.createElement("DIV");
+          glass.setAttribute("class", "img-magnifier-glass");
+          plus = document.createElement("img");
+          plus.setAttribute("src","images/plus.png");
+          plus.setAttribute("id","pointer");
+          
+          glass.appendChild(plus);
+
+
+          /* Insert magnifier glass: */
+          img.parentElement.insertBefore(glass, img);
+
+          /* Set background properties for the magnifier glass: */
+          glass.style.backgroundImage = "url('" + img.src + "')";
+          glass.style.backgroundRepeat = "no-repeat";
+          glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+          bw = 0;
+          w = glass.offsetWidth / 2;
+          h = glass.offsetHeight / 2;
+
+          /* Execute a function when someone moves the magnifier glass over the image: */
+          glass.addEventListener("mousemove", moveMagnifier);
+          img.addEventListener("mousemove", moveMagnifier);
+
+          /*and also for touch screens:*/
+          glass.addEventListener("touchmove", moveMagnifier);
+          img.addEventListener("touchmove", moveMagnifier);
+          
+          function moveMagnifier(e) {
+            glass.style.backgroundImage = "url('" + img.src + "')";
+            var pos, x, y;
+            /* Prevent any other actions that may occur when moving over the image */
+            e.preventDefault();
+            /* Get the cursor's x and y positions: */
+            pos = getCursorPos(e);
+            x = pos.x;
+            y = pos.y;
+            /* Prevent the magnifier glass from being positioned outside the image: */
+            if (x > img.width - (w / zoom)) {x = img.width - (w / zoom);}
+            if (x < w / zoom) {x = w / zoom;}
+            if (y > img.height - (h / zoom)) {y = img.height - (h / zoom);}
+            if (y < h / zoom) {y = h / zoom;}
+
+            $("#mouseX").val(parseInt(pos.x));
+            $("#mouseY").val(parseInt(pos.y));
+            
+            /* Set the position of the magnifier glass: */
+            glass.style.left = img.offsetLeft+(x - w) + "px";
+            glass.style.top = img.offsetTop+(y - h) + "px";
+            /* Display what the magnifier glass "sees": */
+            glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
+          }
+
+          function getCursorPos(e) {
+            var a, x = 0, y = 0;
+            e = e || window.event;
+            /* Get the x and y positions of the image: */
+            a = img.getBoundingClientRect();
+            /* Calculate the cursor's x and y coordinates, relative to the image: */
+            console.log(e.touches);
+            if(typeof(e.touches)!="undefined"){
+            
+                x = e.touches[0].clientX  - a.left;
+                y = e.touches[0].clientY  - a.top-100;
+            }else{
+                x = e.pageX - a.left;
+                y = e.pageY - a.top;
+            }
+            
+            /* Consider any page scrolling: */
+            x = x - window.pageXOffset;
+            y = y - window.pageYOffset;
+            return {x : x, y : y};
+          }
+        }
+
+
+
+
+        function setCamera(){
+            var resolution=$("#resolution").val().split("_");
+
+            var message={};
+            message.cmd="SetCamera";
+            var camera={};
+            camera.path=parseInt($("#cameras").val());
+            camera.camera_width=parseInt(resolution[0]);
+            camera.camera_height=parseInt(resolution[1]);
+            message.value=camera;
+            ws.send(JSON.stringify(message));
+            console.log("Camera changed");
+        }
+
+        function changeCamera(){
+            var t=$("#camera").val();
+            switch(t){
+                case "ipcamera":
+                    $("#video").show();
+                    break;
+                case "webcam":
+                    $("#video").val("");
+                    $("#video").hide();
+                    break;
+            }
+        }
+
+            
+    
+    </script>
+</body>
+
+
+</html>

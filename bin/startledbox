@@ -1,0 +1,12 @@
+#!/bin/bash
+cd /home/*/ledbox/plugin
+sudo python -m compileall *.py
+
+cd /home/*/ledbox
+sudo cp bin/start.png www/buffer.png
+sudo cp bin/banner.jpg media/banner.jpg
+
+rm -f log.txt
+rm -f current_users.txt
+
+sudo python ledbox.pyc

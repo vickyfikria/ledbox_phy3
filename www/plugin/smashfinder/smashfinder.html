@@ -1,0 +1,49 @@
+<html>
+
+<body>
+    <canvas id="myCanvas" width="600" height="337"></canvas>
+    <img id="buffer" src="" style="display:none" />
+
+
+    <button onclick="Run()">Run</button>
+    <button onclick="Stop()">Stop</button>
+
+    <script type="text/javascript">
+    
+        var getUrl = window.location;
+        var ws = new WebSocket('ws://'+getUrl.host+':12347');
+        
+        setInterval(function() {
+            var myImageElement = document.getElementById('buffer');
+            myImageElement.src = 'buffer.jpg?rand=' + Math.random();
+        
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+            myImageElement.onload = function() {
+                ctx.drawImage(myImageElement, 0, 0, 400, 224, 0, 0, 400, 224);
+            }
+
+            //ctx.drawImage(myImageElement, 0, 0, 600, 337, 0, 0, 600, 337);
+        }, 50);
+
+
+        function Run(){
+            msg={};
+            msg.cmd="Run"
+            command=JSON.stringify(msg);
+            ws.send(command);	
+        }
+
+        function Stop(){
+            msg={};
+            msg.cmd="Stop"
+            command=JSON.stringify(msg);
+            ws.send(command);	
+        }
+
+    
+    </script>
+</body>
+
+
+</html>

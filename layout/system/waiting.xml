@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<layout extended="true" name="waiting">
+	
+	<section type="image" src="media/banner.jpg" name="banner" x="96" y="0" width="192" height="64" align="center"></section>	
+	
+</layout>

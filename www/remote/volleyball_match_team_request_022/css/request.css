@@ -1,0 +1,22 @@
+/* Copyright (C) 2019 - CODING SRLS */
+/* build 02 */
+
+
+:root {
+	--row0:			2vh;
+	--row1:			12vh;
+	--row2:			22vh;
+	--row3:			34vh;
+	--row4:			44vh;
+	--row5:			56vh;
+}
+
+#button_request  { top: var(--row5); left: calc(50% - 20vh); height:40vh; width:40vh; font-size: 5vh;font-weight:bold; border: 1px solid var(--color0);}
+#button_request i { font-size: 3.5vh;font-weight:normal; }
+#set, #score, #sub, #timeout {left: calc(50% - 25vw); width: 50vw; height: 8vh;}
+#score {height: 10vh;}
+.message_button { background-color: #e5e5e5 !important; font-weight:bold; font-size: 3.5vh !important;-webkit-text-stroke: 1px var(--colorB);}
+.text-dark {color:var(--color0) !important};
+
+
+	

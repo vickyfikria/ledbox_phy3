@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<layout extended="true" name="image">
+	
+	<section type="image" src="" name="media" x="96" y="0" width="192" height="64" align="center"></section>
+	<section type="rectangle" name="bg" x="130" y="0" width="62" height="23" color="0,0,0"></section>
+	
+	<section type="text"  name="counter" x="188" y="0" fontsize="22" color="255,255,255" align="right"></section>
+	
+</layout>

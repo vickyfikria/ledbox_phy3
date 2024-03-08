@@ -1,0 +1,240 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">        
+		<script type="text/javascript" src="js/jquery-3.3.1.min.js" ></script>
+		<script type="text/javascript" src="js/jquery-ui.min.js" ></script>
+		<script type="text/javascript" src="js/jscolor.js"></script>
+		<script type="text/javascript" src="js/beep.js"></script>
+		<script type="text/javascript" src="js/language.js"></script>
+		<link  rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>			
+		<link  rel="stylesheet" type="text/css" href="css/base.css"/>
+		<link  rel="stylesheet" type="text/css" href="css/volleyball.css"/>
+	</head>
+	
+	<body>
+		<span id="colorStyle"></span>	
+		<div id="background">
+			
+			<input id="team1" name="team1" class="layoutledbox name header disable" layoutattrib="text" type="text" value="TEAM A" onChange="changeColorTeam()" maxlength="6">
+			<input id="team2" name="team2" class="layoutledbox name header disable" layoutattrib="text" type="text" value="TEAM B" onChange="changeColorTeam()" maxlength="6">
+
+			<button id="button_vs" class="name_button hidden" onClick="inv();">&lt;&gt;</button>
+			<button id="color1" class="name_button hidden " onClick="openColorDialog(1);"></button>
+			<button id="color2" class="name_button hidden " onClick="openColorDialog(2);"></button>
+			
+			
+			<div id="set" class="">
+				<span name="set1" class="layoutledbox" layoutattrib="text" id="set1">0</span> <language>SET</language> <span name="set2" class="layoutledbox" layoutattrib="text" id="set2">0</span>
+			</div>
+			<div id="tie" class="hidden"><language>TIE</language></div>
+			<button id="set1plus"  class="set_button hidden" onClick="setSet(1);">+</button>
+			<button id="set2plus"  class="set_button hidden" onClick="setSet(2);">+</button>
+			<button id="set1minus" class="set_button hidden" onClick="setSet(1,false);">-</button>
+			<button id="set2minus" class="set_button hidden" onClick="setSet(2,false);">-</button>
+			
+			
+			<div id="score" class="">
+				<span name="score1" class="layoutledbox" layoutattrib="text" id="score1">0</span> <language>PTS</language> <span name="score2" class="layoutledbox" layoutattrib="text" id="score2">0</span>
+			</div>
+			<button id="score1plus"  class="score_buttonplus"  onClick="setscore(1);">+</button>
+			<button id="score2plus"  class="score_buttonplus"  onClick="setscore(2);">+</button>
+			<button id="score1minus" class="score_buttonminus hidden" onClick="setscore(1,false);">-</button>
+			<button id="score2minus" class="score_buttonminus hidden" onClick="setscore(2,false);">-</button>
+	
+			<div id="timeout" class="">
+				<span name="timeout1" class="layoutledbox" layoutattrib="text" id="timeout1">0</span> <language>TO</language> <span name="timeout2" class="layoutledbox" layoutattrib="text" id="timeout2">0</span>
+			</div>
+			<button id="timeout1plus"  class="timeout_buttonplus" onClick="setTimeoutFunc(1);">+</button>
+			<button id="timeout2plus"  class="timeout_buttonplus" onClick="setTimeoutFunc(2);">+</button>
+			<button id="timeout1minus" class="timeout_buttonminus hidden" onClick="setTimeoutFunc(1,false);">-</button>
+			<button id="timeout2minus" class="timeout_buttonminus hidden" onClick="setTimeoutFunc(2,false);">-</button>
+
+
+			<div id="sub" class="">
+				<span name="sub1" class="layoutledbox" layoutattrib="text" id="sub1">0</span> <language>SUB</language> <span name="sub2" class="layoutledbox" layoutattrib="text" id="sub2">0</span>
+			</div>
+			<button id="sub1plus"  class="sub_buttonplus" onClick="setSub(1);">+</button>
+			<button id="sub2plus"  class="sub_buttonplus" onClick="setSub(2);">+</button>
+			<button id="sub1minus" class="sub_buttonminus hidden" onClick="setSub(1,false);">-</button>
+			<button id="sub2minus" class="sub_buttonminus hidden" onClick="setSub(2,false);">-</button>
+			
+			
+			<div id="servebar" class=""></div>
+			<div id="serve1mask" class="servemask" onClick="setServe(2)"><button id="servebt1" class="serve" ><img src="./images/serve1.png" alt="S"></button></div>
+			<div id="serve2mask" class="servemask hidden" onClick="setServe(1)"><button id="servebt2" class="serve" ><img src="./images/serve2.png" alt="S"></button></div>
+			<button id="zero" class="hidden" onClick="setNewMatch()"><language>NEW</language></button></button>			
+	
+			<button id="button_adv" class="button" onClick="openAdv();"><img src="./images/adv.png" alt="ADV"></button>
+			<button id="button_lock" class="button" onClick="hide(false)"><img src="./images/locked.png" alt="LOCK"></button>
+			<button id="button_unlock" class="button hidden" onClick="hide(true)"><img src="./images/unlocked.png" alt="UNLOCK"></button>
+			<button id="button_setting" class="button" onClick="openSetting();"><img src="./images/gear.png" alt="SETTING"></button>
+			<button id="button_siren" class="button" onClick="Horn()"><img src="./images/siren.png" alt="SIREN"></button>
+			
+			
+
+			<div id="messageTimeout" class="messageDialog" style="display: none;">
+				<div>
+					<p>Timeout</p>
+					<p class="subtitle"></p>
+					<p name="timer" id="message_value">--:--</p>
+					<button class="message_button" onClick="$('#messageTimeout').hide();"><language>STOP</language></button>
+				</div>
+			</div>
+
+			<div id="messageChangeSet" class="messageDialog" style="display: none;">
+				<div>
+					<p><language>CHANGE_SET</language></p>
+					<p class="subtitle"></p>
+					<p id="timer_set">--:--</p>
+					<button class="message_button" onClick="$('#messageChangeSet').hide();"><language>STOP</language></button>
+				</div>
+			</div>
+
+			<div id="selectOrigin" class="messageDialog" style="display:none">
+				<div>
+					<p><language>SYNC_SCORE</language></p>					
+					<p class="subtitle">LEDbox</p>
+					<div class="col2">
+						<div id="colorteam1_ledbox" class="hidden">0</div>
+						<p id="team1_ledbox" class="name">Team 1</p>
+						<p id="score1_ledbox">0</p>							
+					</div>
+					<div class="col2">
+						<div id="colorteam2_ledbox" class="hidden">0</div>
+						<p id="team2_ledbox" class="name">Team 2</p>
+						<p id="score2_ledbox">0</p>							
+					</div>
+					<button class="message_button" onClick="getOriginFromLedBox()"><language>USE</language></button>
+						
+					<p class="subtitle">App</p>
+					<div class="col2">
+						<div id="colorteam1_current" class="hidden">0</div>
+						<p id="team1_current" class="name">Team 1</p>
+						<p id="score1_current">0</p>							
+					</div>
+					<div class="col2">
+						<div id="colorteam2_current" class="hidden">0</div>
+						<p id="team2_current" class="name">Team 2</p>
+						<p id="score2_current">0</p>							
+					</div>
+					<button class="message_button" onClick="getOriginFromDevice()"><language>USE</language></button>
+					
+					<p class="subtitle"></p>
+					<button class="message_button" onClick="newMatch(true)"><language>NEW_MATCH</language></button>
+				</div>
+			</div>
+			
+			
+			<div id="settingDialog" class="messageDialog" style="display: none;">
+				<div>
+					<p><language>SETTING</language></p>
+					<p class="subtitle"></p>					
+					<button class="message_button" onClick="openSettingImage('settingTimeout','images_timeout')"><language>SETTING_TIMEOUT</language></button>
+					<p class=""></p>
+					<button class="message_button" onClick="openSettingImage('settingSet','images_set')"><language>SETTING_SET</language></button>
+					<p class="subtitle"></p>
+					<button class="message_button" onClick='$("#settingDialog").hide();'><language>CLOSE</language></button>
+				
+				</div>
+			</div>
+			
+			<div id="newMatchDialog" class="messageDialog" style="display: none;">
+				<div>
+					<p><language>DO_YOU_WANT_START_NEW_MATCH</language></p>
+					<p class="subtitle"></p>					
+					<button class="message_button" onClick="newMatch(true)"><language>YES</language></button>
+					<p class=""></p>
+					<button class="message_button" onClick="newMatch(false)"><language>NO</language></button>
+				</div>
+			</div>
+
+			<div id="colorTeam" team="1" class="messageDialog" style="display: none;">
+				<div>
+				
+					<p><language>SELECT_COLOR</language></p>
+					<p class="subtitle"></p>				
+					<button class="boxcolor" style="background-color:rgb(127,127,0);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(195,195,127);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(255,239,0);"	onClick="onSetColorTeam(this)"></button>					
+					<button class="boxcolor" style="background-color:rgb(255,127,0);"	onClick="onSetColorTeam(this)"></button>
+					<p style="padding-top:4px;"></p>					
+					<button class="boxcolor" style="background-color:rgb(0,127,0);"		onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(127,255,0);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(63,255,127);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(127,255,255);"	onClick="onSetColorTeam(this)"></button>
+					<p style="padding-top:4px;"></p>
+					<button class="boxcolor" style="background-color:rgb(0,127,127);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(0,0,255);"		onClick="onSetColorTeam(this)"></button>					
+					<button class="boxcolor" style="background-color:rgb(0,127,255);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(0,174,174);"	onClick="onSetColorTeam(this)"></button>
+					<p style="padding-top:4px;"></p>
+					<button class="boxcolor" style="background-color:rgb(255,127,127);"	onClick="onSetColorTeam(this)"></button>			
+					<button class="boxcolor" style="background-color:rgb(255,127,255);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(127,127,255);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(63,0,174);"	onClick="onSetColorTeam(this)"></button>
+					<p style="padding-top:4px;"></p>					
+					<button class="boxcolor" style="background-color:rgb(255,0,0);"		onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(127,63,63);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(127,127,127);"	onClick="onSetColorTeam(this)"></button>
+					<button class="boxcolor" style="background-color:rgb(255,255,255);"	onClick="onSetColorTeam(this)"></button>	
+					<p style="padding-top:4px;"></p>
+					<button class="message_button" onClick="closeColorDialog()"><language>CANCEL</language></button>
+					
+				</div>
+			</div>
+		</div>
+
+		<input class="layoutledbox" type="hidden" id="score1" name="score1" layoutattrib="animation" value="" />
+		<input class="layoutledbox" type="hidden" id="score2" name="score2" layoutattrib="animation" value="" />
+		<input class="layoutledbox" type="hidden" id="score1" name="score1" layoutattrib="animation_params" value="" />
+		<input class="layoutledbox" type="hidden" id="score2" name="score2" layoutattrib="animation_params" value="" />
+
+
+
+
+		<input class="layoutledbox" type="hidden" id="team1" name="team1" layoutattrib="color" value="0,0,255" onchange="changeColorTeam()"/>
+		<input class="layoutledbox" type="hidden" id="team2" name="team2" layoutattrib="color" value="255,0,0" />
+		
+		<input class="layoutledbox" type="hidden" id="set1" name="set1" layoutattrib="color" value="0,0,255" />
+		<input class="layoutledbox" type="hidden" id="set2" name="set2" layoutattrib="color" value="255,0,0" />
+		<input class="layoutledbox" type="hidden" id="bg1" name="bg_score1" layoutattrib="bordercolor" value="0,0,255" />
+		<input class="layoutledbox" type="hidden" id="bg2" name="bg_score2" layoutattrib="bordercolor" value="255,0,0" />
+		<input class="layoutledbox" type="hidden" id="score1" name="score1" layoutattrib="color" value="0,0,255" />
+		<input class="layoutledbox" type="hidden" id="score2" name="score2" layoutattrib="color" value="255,0,0" />
+		
+
+
+		<input class="layoutledbox" type="hidden" id="serve1" name="serve1" layoutattrib="color" value="0,0,0" />
+		<input class="layoutledbox" type="hidden" id="serve2" name="serve2" layoutattrib="color" value="0,0,0" />		
+		
+		<input class="onlyapp" type="hidden" name="images_timeout" id="images_timeout"  layoutattrib="text" />
+		<input class="onlyapp" type="hidden" name="images_set" id="images_set"  layoutattrib="text" />
+	
+	
+	<script type="text/javascript" src="../ledbox.js"></script>
+	<script type="text/javascript" src="../functions.js"></script>
+	<script type="text/javascript" src="js/settingwindow.js"></script>
+	<script type="text/javascript" src="js/volleyball.js"></script>
+
+	<script type="text/javascript">
+	
+		// valori di configurazione
+		var score_win=25;		// Punti per la vittoria nel Set
+		var score_adv=2;		// numero di Punti di vantaggio in caso di parità
+		var set_win=3;			// numero di Set per la vittoria
+		var tie=true;			// utilizzo del Tie-break		
+		var tie_win=15;			// punti per la vittoria nel Tie-break
+		var sub_max=99;			// numero massimo di Sostituzioni nel Set
+		var timeout_max=2;		// numero massimo di Timeout nel Set
+		var timeout_time=30;	// durata del Timeout in sec
+		
+	</script>
+	
+
+	<div class="settingWindow" name="settingTimeout"></div>
+	<div class="settingWindow" name="settingSet"></div>
+	
+
+	</body>
+</html>

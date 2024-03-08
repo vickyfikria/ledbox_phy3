@@ -1,0 +1,54 @@
+#!/bin/bash
+source bash-ini-parser
+
+if [ -d "../installation" ]; then
+
+cd ../installation
+chmod +x install
+sudo ./install
+
+exit 0;
+fi
+
+chmod +x fix
+./fix
+
+#load setting.ini
+cd /home/*/ledbox
+
+sudo chmod +x *.pyc
+sudo rm -R __MACOSX
+sudo rm update.zip
+
+cfg_parser user_setting.ini
+
+cfg_section_WIFI
+WIFI_MODE=$mode
+WIFI_SSID=$ssid
+WIFI_PSK=$psk
+
+sudo addgroup pi www-data
+sudo chown -R pi:root ../ledbox
+sudo chmod -R g+w ../ledbox
+
+cd bin
+
+if [ "$WIFI_MODE" = "ap" ]
+then
+	echo "Wifi Access Point Mode"
+	sudo service hostapd start
+else
+	echo "Wifi Client Mode"
+	sudo sh createNetwork.sh wifi.conf $ssid $psk
+	sudo service hostapd stop
+	sudo dhclient -r
+	sudo wpa_supplicant -Dnl80211 -iwlan0 -cwifi.conf -B &
+	sudo dhclient wlan0 &
+fi
+
+sudo chmod +x update
+sudo chmod +x network
+sudo ./network
+sudo ./update
+sudo ./startledbox &
+sudo ./restartled &

@@ -1,0 +1,10 @@
+RESULT=$(python ../installation/getserialnumber.py 2>&1)
+
+	IFS=';'
+
+	read -ra ADDR <<< "$RESULT"
+
+	SERIALNUMBER=${ADDR[0]}
+	PASSWORD=${ADDR[1]}
+echo $SERIALNUMBER
+echo $PASSWORD

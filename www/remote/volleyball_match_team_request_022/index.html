@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<script type="text/javascript" src="js/jquery-3.3.1.min.js" ></script>
+		<script type="text/javascript" src="js/jscolor.js"></script>
+		<script type="text/javascript" src="js/beep.js"></script>
+		<script type="text/javascript" src="js/language.js"></script>		
+		<link  rel="stylesheet" type="text/css" href="css/base.css"/>
+		<link  rel="stylesheet" type="text/css" href="css/request.css"/>			
+	</head>
+	
+	<body>
+		<span id="colorStyle"></span>	
+		<div id="background">
+			
+			<input id="team1" name="team1" class="layoutledbox name header disable" layoutattrib="text" type="text" value="TEAM A" onChange="changeColorTeam()">
+			<input id="team2" name="team2" class="layoutledbox name header disable" layoutattrib="text" type="text" value="TEAM B" onChange="changeColorTeam()">
+			<!-- <div id="vs" class="name header">-</div> -->
+			
+			<div id="winner" class="name header hidden"></div>
+			
+			<div id="set" class="">
+				<span name="set1" class="layoutledbox" layoutattrib="text" id="set1">0</span> <label>SET</label> <span name="set2" class="layoutledbox" layoutattrib="text" id="set2">0</span>
+			</div>		
+			
+			<div id="score" class="">
+				<span name="score1" class="layoutledbox" layoutattrib="text" id="score1">0</span> <label>PTS</label> <span name="score2" class="layoutledbox" layoutattrib="text" id="score2">0</span>
+			</div>
+	
+			<div id="timeout" class="">
+				<span name="timeout1" class="layoutledbox" layoutattrib="text" id="timeout1">0</span> <label>TO</label> <span name="timeout2" class="layoutledbox" layoutattrib="text" id="timeout2">0</span>
+			</div>
+				
+			<div id="sub" class="">
+				<span name="sub1" class="layoutledbox" layoutattrib="text" id="sub1">0</span> <label>SUB</label> <span name="sub2" class="layoutledbox" layoutattrib="text" id="sub2">0</span>
+			</div>
+		
+			<button id="button_request" class="button" onclick="Request()" style="display:none"><i><language>REQUEST</language></i><br/><span id="teamname_selected"></span></button>
+			<!--<button id="button_request2" class="button" onclick="Request(2)" style="display:none"><i><language>REQUEST</language></i><br></button>-->
+			
+			<div id="choiceTeamDialog" class="messageDialog" style="">
+				<div id="btns_team" style="display: none">
+					<br/>
+					<p><language>TEAM_CHOICE</language></p>					
+					<p class="subtitle"></p>
+					<br/>
+					<button id="team1_ledbox" class="message_button" onClick="choiceTeam(this);"></button>
+					<br/>
+					<br/>
+					<button id="team2_ledbox" class="message_button" onClick="choiceTeam(this);"></button>
+				</div>
+				<div id="alert_no_matchscore">
+					<br/>
+					<p><language>NO_MATCHSCORE</language></p>
+					<br/>
+					<button class="message_button text-dark" onclick="getLayout();"><language>VERIFY_AGAIN</language></button>
+				</div>		
+			</div>
+			
+		<input class="layoutledbox" type="hidden" id="team1" name="team1" layoutattrib="color" value="0,0,255" onchange="changeColorTeam()"/>
+		<input class="layoutledbox" type="hidden" id="team2" name="team2" layoutattrib="color" value="255,0,0" />
+		<input class="layoutledbox" type="hidden" id="set1" name="set1" layoutattrib="color" value="0,0,255" />
+		<input class="layoutledbox" type="hidden" id="set2" name="set2" layoutattrib="color" value="255,0,0" />
+		<input class="layoutledbox" type="hidden" id="bg1" name="bg_score1" layoutattrib="bordercolor" value="0,0,255" />
+		<input class="layoutledbox" type="hidden" id="bg2" name="bg_score2" layoutattrib="bordercolor" value="255,0,0" />
+		<input class="layoutledbox" type="hidden" id="score1" name="score1" layoutattrib="color" value="0,0,255" />
+		<input class="layoutledbox" type="hidden" id="score2" name="score2" layoutattrib="color" value="255,0,0" />
+		<input class="layoutledbox" type="hidden" id="serve1" name="serve1" layoutattrib="color" value="0,0,0" />
+		<input class="layoutledbox" type="hidden" id="serve2" name="serve2" layoutattrib="color" value="0,0,0" />
+		
+	<script type="text/javascript" src="../ledbox.js"></script>
+	<script type="text/javascript" src="../functions.js"></script>
+	<script type="text/javascript" src="js/request.js"></script>
+	</body>
+</html>

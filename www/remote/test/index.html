@@ -1,0 +1,282 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="js/jquery-3.3.1.min.js" ></script>
+		<script type="text/javascript" src="js/jquery-ui.min.js" ></script>
+		<script type="text/javascript" src="js/jscolor.js"></script>
+		<script type="text/javascript" src="js/beep.js"></script>
+		<script type="text/javascript" src="js/language.js"></script>
+		<link  rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>			
+		<link  rel="stylesheet" type="text/css" href="css/base.css"/>
+	</head>
+	
+	<body>
+        <div id="background">
+            <h1>Connect to LEDbox</h1>
+            <label>Select user: </label>
+            <select id="ListAlias"></select>
+            <br/>
+            <label>Select sport: </label>
+            <select id="sport">
+                <option value="volleyball">Volleyball</option>
+                <option value="basketball">Basket</option>
+                <option value="table-tennis">Table Tennis</option>
+                <option value="tennis">Tennis</option>
+                <option value="soccer">Soccer</option>
+            </select>
+            <br/>
+            <button class="message_button" onclick="init()">Connect</button>
+            <button class="message_button" onclick="horn()">Horn</button>
+            <hr/>
+            <h1>Plugin</h1>
+            
+            <div id="playlistPanel" style="display:none;">
+                <h2>Playlist</h2>
+                <label>Select playlist:</label>
+                <select id="ListPlaylist">
+                </select>
+                <br/>
+                <button class="message_button" onclick="runPlaylist()">Play Playlist</button>
+                <button class="message_button" onclick="Pause()">Pause Playlist</button>
+                <button class="message_button" onclick="Stop()">Stop Playlist</button>
+            </div>
+
+            <hr/>
+            
+            <div id="practicePanel" style="display:none;">
+                <h2>Practice</h2>
+                <label>Select practice:</label><select id="ListPractice"></select>
+                <br/>
+                <button class="message_button" onclick="runPractice()">Play Practice</button>
+                <button class="message_button" onclick="PausePractice()">Pause Practice</button>
+                <button class="message_button" onclick="StopPractice()">Stop Practice</button>
+            </div>
+            
+            
+
+           
+                
+            
+                
+    </div>	
+
+        <script type="text/javascript" src="../ledbox.js"></script>
+	
+	
+	<script type="text/javascript">
+           
+            ws.onmessage = function(event){
+                obj=JSON.parse(event.data);
+                switch(obj.sender){
+                    case "Connect":
+                        getListAlias();
+                        break;
+                    case "Init":
+                        $("#practicePanel").show();
+                        $("#playlistPanel").show();
+                        
+                        break;
+                    case "GetListAlias":
+                        obj.value.forEach(function(item){
+                            var option = document.createElement("option");
+                            option.text = item.alias;
+                            option.value = item.alias;
+                            var select = document.getElementById("ListAlias");
+                            select.appendChild(option);
+                        
+                        });
+                        break;
+
+                    case "GetListPractice":
+                        $("#ListPractice").empty();
+                        obj.value.forEach(function(item){
+                            var option = document.createElement("option");
+                            option.text = item.title;
+                            option.value = item.hashname;
+                            var select = document.getElementById("ListPractice");
+                            select.appendChild(option);
+                        
+                        });
+                        break;
+                    case "GetListPlaylistImage":
+                        $("#ListPlaylist").empty();
+                        obj.value.forEach(function(item){
+                            var option = document.createElement("option");
+                            option.text = item.title;
+                            option.value = item.hashname;
+                            var select = document.getElementById("ListPlaylist");
+                            select.appendChild(option);
+                        
+                        });
+                        break;
+                   
+                }
+            }
+
+
+
+        function init(){
+            var message={};
+            message.cmd="Init";
+            message.alias=getCurrentAlias();
+            message.sport=$("#sport").val();
+            var message_value={}
+            message_value.version="0.3"
+
+            message.value=message_value;
+            sendCommand(JSON.stringify(message));
+
+            sleep(500);
+
+            getListPlaylist();
+
+            sleep(500);
+
+            getListPractice();
+
+           
+            
+
+
+
+        }
+
+        function getCurrentAlias(){
+            var e=document.getElementById("ListAlias");
+            return e.options[e.selectedIndex].value;
+        }
+
+        function getCurrentPlaylist(){
+            var e=document.getElementById("ListPlaylist");
+            return e.options[e.selectedIndex].value;
+        }
+
+		function runPlaylist(){
+
+            var message={};
+            message.cmd="StartPlaylistImage";
+            message.alias=getCurrentAlias();
+            message.sport=$("#sport").val();
+            message.value={};
+            message.value.hashname=$("#ListPlaylist").val();
+            sendCommand(JSON.stringify(message));	
+        }
+
+        function Pause(){
+            var message={};
+            message.cmd="PausePlaylistImage";
+            message.value={};
+            message.value.hashname=$("#ListPlaylist").val();
+            sendCommand(JSON.stringify(message));
+        }
+
+       
+
+        function Stop(){
+            var message={};
+            message.cmd="StopPlaylistImage";
+            message.alias=getCurrentAlias();
+            message.value=getCurrentPlaylist();
+            sendCommand(JSON.stringify(message));
+        }
+
+        function getCurrentPractice(){
+            var e=document.getElementById("ListPractice");
+            return e.options[e.selectedIndex].value;
+        }
+
+        function runPractice(){
+
+           
+
+            var message={};
+            message.cmd="StartPractice";
+            message.alias=getCurrentAlias();
+            message.sport=$("#sport").val();
+            message.value={}
+            message.value.hashname=$("#ListPractice").val();
+            
+            
+            sendCommand(JSON.stringify(message));	
+        }
+
+        function PausePractice(){
+            var message={};
+            message.cmd="PausePractice";
+            message.value={};
+            message.value.hashname=$("#ListPractice").val();
+            sendCommand(JSON.stringify(message));
+        }
+
+        function StopPractice(){
+            var message={};
+            message.cmd="StopPractice";
+            message.alias=getCurrentAlias();
+            message.value=getCurrentPractice();
+            sendCommand(JSON.stringify(message));
+        }
+
+        function getListAlias(){
+            var message={};
+            message.cmd="GetListAlias";
+            message.alias=getCurrentAlias();
+            message.value="";
+            sendCommand(JSON.stringify(message));
+        }
+
+
+        function getListPractice(){
+            var message={};
+            message.cmd="GetListPractice";
+            message.alias=getCurrentAlias();
+            message.sport=$("#sport").val();
+            message.value="";
+            sendCommand(JSON.stringify(message));
+        }
+
+        function getListPlaylist(){
+            var message={};
+            message.cmd="GetListPlaylistImage";
+            message.alias=getCurrentAlias();
+            message.sport=$("#sport").val();
+            message.value="";
+            sendCommand(JSON.stringify(message));
+        }
+
+        function getListAlias(){
+            var message={};
+            message.cmd="GetListAlias";
+            message.value="";
+            sendCommand(JSON.stringify(message));
+        }
+
+        
+        function sleep(milliseconds) {
+            var start = new Date().getTime();
+            for (var i = 0; i < 1e7; i++) {
+                if ((new Date().getTime() - start) > milliseconds){
+                break;
+                }
+            }
+        }
+
+
+      
+
+        function horn(){
+            var message={};
+            message.cmd="Horn";
+            var message_value={};
+            message_value.times=1;
+            message_value.sleep=0.5;
+
+            message.value=message_value;
+            sendCommand(JSON.stringify(message));
+        }
+		
+    </script>
+    
+    
+	</body>
+</html>

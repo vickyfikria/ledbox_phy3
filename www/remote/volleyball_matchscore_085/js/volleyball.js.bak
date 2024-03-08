@@ -1,0 +1,819 @@
+/* Copyright (C) 2019 - CODING SRLS */
+/* build 05 */
+	
+
+interface_name="volleyball_matchscore";
+default_layout="volleyball_matchscore_02"; //layout che viene aperto quando si avvia l'interfaccia
+timeout_layout="volleyball_matchscore_timeout_02";
+set_layout="volleyball_matchscore_set_02";
+
+var value_ledbox;
+var lock=false;
+var init=false;
+var timeout_images=[];
+var set_images=[];
+var timer_timeout;
+var timer_changeset;
+// Eventi
+$(document).on('afterLoad', function(e, eventInfo) { 
+	changeColorTeam();
+	sleep(500); 
+	requestValues();
+	
+});
+
+$(document).on('messageReceived', function(e, eventInfo) { 
+	setValues();
+	switch(e.message.sender){
+		case "GetSections":
+			if(!init){
+				value_ledbox=e.message.value;
+				
+				$("#team1_ledbox").html(getSectionValue(value_ledbox,"team1","text"));
+				$("#team2_ledbox").html(getSectionValue(value_ledbox,"team2","text"));
+				$("#score1_ledbox").html(getSectionValue(value_ledbox,"score1","text"));
+				$("#score2_ledbox").html(getSectionValue(value_ledbox,"score2","text"));
+				$("#colorteam1_ledbox").html(getSectionValue(value_ledbox,"team1","color"));
+				$("#colorteam2_ledbox").html(getSectionValue(value_ledbox,"team2","color"));
+
+				$("#team1_ledbox").css("color","rgb("+getSectionValue(value_ledbox,"team1","color")+")");
+				$("#team2_ledbox").css("color","rgb("+getSectionValue(value_ledbox,"team2","color")+")");
+				$("#score1_ledbox").css("color","rgb("+getSectionValue(value_ledbox,"score1","color")+")");
+				$("#score2_ledbox").css("color","rgb("+getSectionValue(value_ledbox,"score2","color")+")");
+
+				$("#team1_current").html(getSectionValue(sections,"team1","text"));
+				$("#team2_current").html(getSectionValue(sections,"team2","text"));
+				$("#score1_current").html(getSectionValue(sections,"score1","text"));
+				$("#score2_current").html(getSectionValue(sections,"score2","text"));
+				$("#colorteam1_current").html(getSectionValue(sections,"team1","color"));
+				$("#colorteam2_current").html(getSectionValue(sections,"team2","color"));
+
+				$("#team1_current").css("color","rgb("+getSectionValue(sections,"team1","color")+")");
+				$("#team2_current").css("color","rgb("+getSectionValue(sections,"team2","color")+")");
+				$("#score1_current").css("color","rgb("+getSectionValue(sections,"score1","color")+")");
+				$("#score2_current").css("color","rgb("+getSectionValue(sections,"score2","color")+")");
+
+				$("#selectOrigin").show();
+				init=true;
+			}
+			break;
+			
+		
+	}
+
+	switch(e.message.cmd){
+		case "Uploaded":
+			break;
+		case "SetSections":
+			changeColorTeam();
+			break;
+	}
+	
+	
+});
+
+$(document).on('settingClose', function(e, eventInfo) { 
+	other_params=createSections(other_params,".onlyapp");
+    save(other_params);
+    try{
+		images=JSON.parse($("#"+field_setting).val());
+		for(i=0;i<images.length;i++){
+			uploadToLedbox(images[i].file_local);
+			sleep(2000);
+		}
+	}catch{
+
+	}
+
+});
+
+
+
+var team1=document.getElementById('team1').value;	// nome prima squadra
+var team2=document.getElementById('team2').value;	// nome seconda squadra		
+var score1=0;										// punti prima squadra
+var score2=0;										// punti seconda squadra		
+var set1=0;											// set prima squadra
+var set2=0;											// set seconda squadra
+var sub1=0;											// sostituzioni prima squadra
+var sub2=0;											// sostituzioni seconda squadra
+var timeout1=0;										// timeout prima squadra
+var timeout2=0;										// timeout seconda squadra
+var current_serve=1;								// squadra al servizio
+var tie_on=false;									// tie break
+var manual=false;									// stato pulsante LOCK
+
+
+
+function setValues(){
+	team1=parseInt(getSectionValue(sections,"team1","text"));
+	team2=parseInt(getSectionValue(sections,"team2","text"));
+	score1=parseInt(getSectionValue(sections,"score1","text"));
+	score2=parseInt(getSectionValue(sections,"score2","text"));
+	set1=parseInt(getSectionValue(sections,"set1","text"));
+	set2=parseInt(getSectionValue(sections,"set2","text"));
+	sub1=parseInt(getSectionValue(sections,"sub1","text"));
+	sub2=parseInt(getSectionValue(sections,"sub2","text"));
+	timeout1=parseInt(getSectionValue(sections,"timeout1","text"));
+	timeout2=parseInt(getSectionValue(sections,"timeout2","text"));
+
+}
+
+
+//blocca i controlli per 1 secondo
+function setlock(){
+	if(!manual){
+		lock=true;
+		setTimeout(function(){ lock=false; }, 1000);
+	}
+}
+
+
+// azzeramento				
+function azzera(all){			
+	
+	if(all) {
+		play([[1200, 0.5]]);
+		set1=0;
+		set2=0;
+		$("#set1").html('0');
+		$("#set2").html('0');
+		tie_on=false;
+		$("#tie").addClass('hidden');
+		$("#winner").addClass('hidden');					
+	}
+	
+	score1=0;
+	score2=0;			
+	sub1=0;
+	sub2=0;		
+	timeout1=0;
+	timeout2=0;
+	$("#score1").html('0');
+	$("#score2").html('0');
+	$("#sub1").html('0');
+	$("#sub2").html('0');
+	$("#timeout1").html('0');
+	$("#timeout2").html('0');
+	$("#zero").addClass('hidden');
+	hide(true);
+	
+	setColor(1,getSectionValue(sections,"team2","color"));
+	setColor(2,getSectionValue(sections,"team1","color"));
+	updateValues();
+	refreshValue(sections);
+	
+}
+
+// cambia verso squadre			
+function inv(){					
+	
+	team1 = document.getElementById('team2').value;
+	team2 = document.getElementById('team1').value;
+	document.getElementById('team1').value=team1;
+	document.getElementById('team2').value=team2;	
+	
+	set0=set1;
+	set1=set2;
+	set2=set0;
+	$("#set1").html(set1);
+	$("#set2").html(set2);		
+	
+	score0=score1;
+	score1=score2;
+	score2=score0;
+	$("#score1").html(score1);
+	$("#score2").html(score2);
+	
+	sub0=sub1;
+	sub1=sub2;
+	sub2=sub0;
+	$("#sub1").html(sub1);
+	$("#sub2").html(sub2);
+	
+	timeout0=timeout1;
+	timeout1=timeout2;
+	timeout2=timeout0;
+	$("#timeout1").html(timeout1);
+	$("#timeout2").html(timeout2);
+	
+	var colorteam0=colorteam1;
+	colorteam1=colorteam2;
+	colorteam2=colorteam0;
+	$("#colorStyle").append("<style>:root{--color1:"+colorteam1+"}</style>");
+	$("#colorStyle").append("<style>:root{--color2:"+colorteam2+"}</style>");
+	
+	setColor(1,getSectionValue(sections,"team2","color"));
+	setColor(2,getSectionValue(sections,"team1","color"));
+
+	updateValues();
+
+	if(manual==false) refreshValue(sections);
+}
+
+// inverte assegnazione punto			
+function scoreTransfer(){
+	if(score1+score2 > 0) {
+		if(other==1){
+			if(score2 > 0) score2=score2-1;
+			score1=score1+1;
+			other=2;
+			setServe(1);
+		} else{
+			score2=score2+1;
+			if(score1 > 0) score1=score1-1;
+			other=1;
+			setServe(2);
+		}
+	}
+	$("#score1").html(score1);
+	$("#score2").html(score2);
+	$("#winner").addClass('hidden');
+	
+	if(manual==false) refreshValue(sections);
+}
+
+
+// nasconde	/ scopre			
+function hide(on){
+	
+	if(on){
+		manual=false;
+		$(".name_button").addClass('hidden');
+		$(".name").addClass('disable');
+		$(".set_button").addClass('hidden');
+		$(".score_buttonminus").addClass('hidden');			
+		$(".sub_buttonminus").addClass('hidden');			
+		$(".timeout_buttonminus").addClass('hidden');
+		$("#zero").addClass('hidden');
+		$("#button_unlock").addClass('hidden');
+		$("#score1[layoutattrib='animation_params']").val("");
+		$("#score2[layoutattrib='animation_params']").val("");
+		$("#score1[layoutattrib='animation']").val("");
+		$("#score2[layoutattrib='animation']").val("");
+	} else {
+		manual=true;				
+		$(".name_button").removeClass('hidden');
+		$(".name").removeClass('disable');
+		$(".name").removeClass('disable');
+		$(".set_button").removeClass('hidden');
+		$(".set_button").removeClass('blinking');
+		$(".score_buttonminus").removeClass('hidden');			
+		$(".sub_buttonminus").removeClass('hidden');			
+		$(".timeout_buttonminus").removeClass('hidden');
+		$("#zero").removeClass('hidden');
+		$('#zero').removeClass('blinking');
+		$("#button_unlock").removeClass('hidden');
+		disable(false);
+		openLayout(default_layout);
+		sleep(500);
+
+	}
+
+
+
+	refreshValue(sections);
+}
+
+
+// disabilita / abilita				
+function disable(on){
+	
+	if (on) {
+		play([[1000, 0.5]]);
+		$("#score1plus").addClass('disable');
+		$("#score2plus").addClass('disable');						
+		$("#sub1plus").addClass('disable');
+		$("#sub2plus").addClass('disable');							
+		$("#timeout1plus").addClass('disable');
+		$("#timeout2plus").addClass('disable');
+		// $(".servemask").addClass('disable');
+	} else {
+		$("#score1plus").removeClass('disable');
+		$("#score2plus").removeClass('disable');						
+		$("#sub1plus").removeClass('disable');
+		$("#sub2plus").removeClass('disable');							
+		$("#timeout1plus").removeClass('disable');
+		$("#timeout2plus").removeClass('disable');
+		// $(".servemask").removeClass('disable');
+	}
+}
+
+//Apre la dialog per la selezione del team 
+function openColorDialog(team){
+	$("#colorTeam").attr("team",team);
+	$("#colorTeam").show();
+}
+
+//Chiude la dialog per la selezione del team
+function closeColorDialog(){
+	$("#colorTeam").hide();
+}
+
+//Imposta il colore del team rispetto al pulsante che è stato premuto 
+function onSetColorTeam(elem){
+	var bgcolor = window.getComputedStyle(elem, null).getPropertyValue("background-color");
+	team=($(elem).parent().parent().attr("team"));
+
+	bgcolor=bgcolor.replace("rgb(","");
+	bgcolor=bgcolor.replace(")","");
+	setColor(team,bgcolor);
+
+	
+	closeColorDialog();
+	changeColorTeam();
+
+
+
+	
+}
+
+//Cambia il colore del team sull'HTML dell'interfaccia
+function changeColorTeam(){
+	$("#colorStyle").empty();
+	
+	colorteam1=$('#team1[layoutattrib="color"]').val();
+	colorteam1=convertRGBColorToHex(colorteam1);
+	colorteam2=$('#team2[layoutattrib="color"]').val();
+	colorteam2=convertRGBColorToHex(colorteam2);
+
+	$("#colorStyle").append("<style>:root{--color1:"+colorteam1+"} :root{--color2:"+colorteam2+"}</style>");	
+	
+	
+}
+
+// imposta il colore nelle variabiali che vengono inviati al LEDbox
+function setColor(team,layoutcolor) {
+	
+	
+	$('#team'+team+'[layoutattrib="color"]').val(layoutcolor);
+	$("#set"+team+'[layoutattrib="color"]').val(layoutcolor);
+	$("#bg"+team+'[layoutattrib="bordercolor"]').val(layoutcolor);
+	$("#score"+team+'[layoutattrib="color"]').val(layoutcolor);
+	
+}		
+
+// assegna Servizio
+function setServe(team,norefresh=false){
+
+	/*if(lock)
+		return;
+
+	setlock();*/
+
+
+	if(team==1){
+		$("#serve1mask").removeClass('hidden');
+		$("#serve2mask").addClass('hidden');
+		$("#serve1").val("255,255,255");
+		$("#serve2").val("0,0,0");
+	} else {
+		$("#serve2mask").removeClass('hidden');
+		$("#serve1mask").addClass('hidden');
+		$("#serve1").val("0,0,0");
+		$("#serve2").val("255,255,255");
+		
+	}
+	
+	if(manual==false)
+		if(norefresh==false)
+	 		refreshValue(sections);
+}
+
+
+
+
+
+// assegna Punto
+function setscore(team,plus=true){
+	if(lock)
+		return;
+
+	setlock();
+
+
+	if(plus) v=1;else v=-1;
+	if(team==1){
+		score1=score1+v;
+		if(score1==-1) score1=0;			// impedisce valori inferiori a zero
+		if(score1==100) score1=99;			// impedisce valori superiori a 99
+		score=score1;
+		other=2;			
+		}
+	else{
+		score2=score2+v;
+		if(score2==-1) score2=0;			// impedisce valori inferiori a zero
+		if(score2==100) score2=99;			// impedisce valori superiori a 99
+		score=score2;
+		other=1;
+		}
+	
+	$("#score"+team).html(score);
+	
+	$("#score1[layoutattrib='animation_params']").val("");
+	$("#score2[layoutattrib='animation_params']").val("");
+	$("#score1[layoutattrib='animation']").val("");
+	$("#score2[layoutattrib='animation']").val("");
+
+	$("#score"+team+"[layoutattrib='animation']").val("blinking");
+	$("#score"+team+"[layoutattrib='animation_params']").val("{'count':3,'pause':500}");
+	
+	
+		// CONTROLLI AUTOMATICI
+		if(manual==false) {
+			
+			// verifica il primo servizio del Set
+			var p=set1+set2+score1+score2;
+			if (p==1 && current_serve==1) prox_serve=2; else prox_serve=1;
+
+			// verifica la vincita del Match al Tie-Break
+			if(tie_on==true && score1>tie_win-1 && score1-score2>score_adv-1 || tie_on==true && score2>tie_win-1 && score2-score1>score_adv-1) win_match(team);
+
+			// verifica la vincita del Set
+			if(tie_on==false && score1>score_win-1 && score1-score2>score_adv-1 || tie_on==false && score2>score_win-1 && score2-score1>score_adv-1) {
+				$(".set_button").addClass('hidden');
+				$('#set'+team+'plus').removeClass('hidden');
+				$('#set'+team+'plus').addClass('blinking');
+				disable(true);		
+			}
+			setServe(team,true);
+			
+			refreshValue(sections);
+
+			$("#score"+team+"[layoutattrib='animation']").val("");
+			$("#score"+team+"[layoutattrib='animation_params']").val("");
+			
+		}
+		
+	
+	
+}
+
+
+// assegna Set
+function setSet(team,plus=true){
+
+	if(lock)
+		return;
+
+	setlock();
+
+
+	if(plus) v=1;else v=-1;
+	if(team==1){ 
+		set1=set1+v;
+		if(set1==-1) set1=0;					// impedisce valori inferiori a zero
+		if(set1==set_win+1) set1=set_win;		// impedisce valori oltre il massimo impostato				
+		sets=set1;
+		}
+	else{
+		set2=set2+v;
+		if(set2==-1) set2=0;					// impedisce valori inferiori a zero
+		if(set2==set_win+1) set2=set_win;		// impedisce valori oltre il massimo impostato
+		sets=set2;
+		}
+	
+	$("#set"+team).html(sets)
+	if ($(".set_button").hasClass('hidden')) $('#set'+team+'plus').addClass('hidden');
+	
+	// verifica e attiva Tie Break
+	if(tie==true && set1==set_win-1 && set2==set_win-1) {
+		tie_on=true;
+		$("#tie").removeClass('hidden');
+		
+	} else {
+		tie_on=false;
+		$("#tie").addClass('hidden');			
+	}
+	
+
+	// ESEGUE CONTROLLI AUTOMATICI
+	if(manual==false) {
+		
+		// verifica la vincita del Match
+		if(set1>set_win-1 || set2>set_win-1) win_match(team);				
+		else {
+			
+			startChangeSet();
+
+			disable(false);					
+			azzera(false);
+			inv();								
+			setServe(prox_serve);
+		}
+	}		
+}
+
+// assegna Match
+function win_match(team) {
+	
+	azzera(false);
+	disable(true);
+	$('#zero').removeClass('hidden');
+	$('#zero').addClass('blinking');
+
+}
+
+
+// assegna Timeout
+function setTimeoutFunc(team,plus=true){
+	
+	if(team==1){					
+		if(plus && timeout1 < timeout_max){
+			++timeout1;					
+			if(manual==false) messageTimeout(1);
+		} 	else if(plus==false && timeout1>0) --timeout1; timeout=timeout1;
+	} else {
+		if(plus && timeout2<timeout_max){
+			++timeout2;					
+			if(manual==false) messageTimeout(2);
+		} 	else if(plus==false && timeout2>0) --timeout2; timeout=timeout2;
+	}			
+	$("#timeout"+team).html(timeout);			
+}
+
+
+// visualizza Timeout
+function messageTimeout(team=1){
+	
+	disable(true);
+	try{
+		timeout_images=JSON.parse($("#images_timeout").val());
+	}catch{
+		timeout_images="";
+	}
+	message={}
+	message.cmd="SetLayout";
+	message.name=timeout_layout;
+	message.value=[];
+
+	message.value.push(createSectionValue("lbl","text","TIMEOUT"));
+	message.value.push(createSectionValue("set1","text",getSectionValue(sections,"set1","text")));
+	message.value.push(createSectionValue("set2","text",getSectionValue(sections,"set2","text")));
+	message.value.push(createSectionValue("set1","color",getSectionValue(sections,"team1","color")));
+	message.value.push(createSectionValue("set2","color",getSectionValue(sections,"team2","color")));
+
+	message.value.push(createSectionValue("score1","color",getSectionValue(sections,"team1","color")));
+	message.value.push(createSectionValue("score2","color",getSectionValue(sections,"team2","color")));
+	message.value.push(createSectionValue("score1","text",getSectionValue(sections,"score1","text")));
+	message.value.push(createSectionValue("score2","text",getSectionValue(sections,"score2","text")));
+	
+	message.value.push(createSectionValue("bg_score1","bordercolor",getSectionValue(sections,"team1","color")));
+	message.value.push(createSectionValue("bg_score2","bordercolor",getSectionValue(sections,"team2","color")));
+	
+	
+	message.value.push(createSectionValue("timer","text","--:--"));
+	message.value.push(createSectionValue("score1","animation",""));
+	message.value.push(createSectionValue("score2","animation",""));
+	message.value.push(createSectionValue("score1","animation_params",""));
+	message.value.push(createSectionValue("score2","animation_params",""));
+	message.value.push(createSectionValue("score"+team,"animation","blinking"));
+	if(timeout_images.length>0)
+		message.value.push(createSectionValue("media","src",timeout_images[0].file));
+
+
+	sendCommand(JSON.stringify(message));
+
+
+	$("#message_value").css("color","black");
+	$("#message_value").html('--:--');
+
+
+	$("#messageTimeout").on("hide",function(){
+		stopTimeout();
+	});
+
+
+
+
+	$("#messageTimeout").show();	
+	
+	disable(false);			
+
+	sleep(500);
+	
+	startTimeout();	
+}
+
+	// Esegue Timeout
+	function startTimeout(){
+		
+		time=timeout_time;
+		//refreshValue();
+		
+
+		timer_timeout=setInterval(function(){			
+			
+			//timeout_images
+			var t=0;
+			var timeout_image="media/banner.jpg";
+			var image_found=false;
+			if(timeout_images.length>0){
+				while(!image_found)
+					for(j=0;j<timeout_images.length;j++){
+						t=t+parseInt(timeout_images[j].duration);
+						
+						if((timeout_time-time+1)<=t){
+							timeout_image=timeout_images[j].file;
+							image_found=true;
+							break;
+						}
+					}
+			}
+			
+		
+			message={}
+			message.cmd="SetSections";
+
+			message.value=[];
+			message.value.push(createSectionValue("timer","text",String(time)));
+			message.value.push(createSectionValue("media","src",timeout_image));
+
+			sendCommand(JSON.stringify(message));
+			
+			if(time==0){
+				sleep(500);
+				stopTimeout();
+				$("#messageTimeout").hide();
+				return;
+			}			
+			
+			if (time < 4) {
+				c = "red";
+				play([[1000, 0.5]]);
+			} else c = "black";
+			
+			$("#message_value").css("color",c);
+			$("#message_value").html(String(time));
+			
+			time--;
+			
+		},1200);
+	}
+
+	function stopTimeout() {
+
+		clearInterval(timer_timeout);
+		time=0;
+		message={}
+		message.cmd="SetLayout";
+		message.value=default_layout;
+
+		sendCommand(JSON.stringify(message));
+		
+		$("#animationteam1").val("");
+		$("#animationteam2").val("");
+		refreshValue(sections);			
+	}	
+
+
+	function startChangeSet(){
+		try{
+			set_images=JSON.parse($("#images_set").val());
+		}catch{
+			set_images="";
+		}
+
+		$("#messageChangeSet").on("hide",function(){
+			stopChangeSet();
+		});
+
+
+
+		$("#messageChangeSet").show();
+
+		message={}
+		message.cmd="SetLayout";
+		message.value=set_layout;
+		sendCommand(JSON.stringify(message));
+
+		time=0;
+		timer_changeset=setInterval(function(){			
+			
+			//timeout_images
+			var t=0;
+			var set_image="media/banner.jpg";
+			var image_found=false;
+			if(set_images.length>0){
+				while(!image_found)
+					for(j=0;j<set_images.length;j++){
+						t=t+parseInt(set_images[j].duration);
+						
+						if(time<=t){
+							set_image=set_images[j].file;
+							image_found=true;
+							break;
+						}
+					}
+			}
+			
+		
+			message={}
+			message.cmd="SetSections";
+
+			message.value=[];
+			message.value.push(createSectionValue("media","src",set_image));
+
+			sendCommand(JSON.stringify(message));
+
+			var l= String(Math.floor(time / 60)).padStart(2,'0') + ":" + String(time % 60 ? time % 60 : '00').padStart(2,'0');
+
+
+			$("#timer_set").html(l);
+			time++;
+		},1000);
+	}
+
+	function stopChangeSet() {
+
+		clearInterval(timer_changeset);
+		
+		message={}
+		message.cmd="SetLayout";
+		message.value=default_layout;
+
+		sendCommand(JSON.stringify(message));
+		//$("#messageChangeSet").hide();
+		
+		$("#animationteam1").val("");
+		$("#animationteam2").val("");
+		refreshValue(sections);	
+	}	
+	
+// assegna Sostituzione
+function setSub(team,plus=true){
+
+	if(lock)
+		return;
+
+	setlock();
+
+	
+	if(plus) v=1;else v=-1;
+	if(team==1){ 
+		sub1=sub1+v;
+		if(sub1==-1) sub1=0;					// impedisce valori negativi
+		if(sub1==sub_max+1) sub1=sub_max;		// impedisce valori oltre il massimo
+		sub=sub1;
+		}
+	else{
+		sub2=sub2+v;
+		if(sub2==-1) sub2=0;					// impedisce valori negativi
+		if(sub2==sub_max+1) sub2=sub_max;		// impedisce valori oltre il massimo
+		sub=sub2;
+		}
+	
+	$("#sub"+team).html(sub);
+	
+	if(manual==false) refreshValue(sections);
+
+}
+
+
+function getOriginFromDevice(){
+	
+
+	setColor(1,getSectionValue(sections,"team1","color"));
+	setColor(2,getSectionValue(sections,"team2","color"));
+	refreshValue(sections);
+	changeColorTeam();
+	$("#selectOrigin").hide();
+}
+
+function getOriginFromLedBox(){
+	sections=value_ledbox;
+	updateValues(sections);
+	
+	setColor(1,getSectionValue(sections,"team1","color"));
+	setColor(2,getSectionValue(sections,"team2","color"));
+
+	changeColorTeam();
+	$("#selectOrigin").hide();
+	save(sections);
+	setValues();
+}
+
+
+function setNewMatch(){
+	$("#newMatchDialog").show();
+}
+
+function newMatch(n=true){			
+	if (n) {
+		disable(false);
+		azzera(true);
+	}
+	$("#newMatchDialog").hide();
+	$("#settingDialog").hide();
+	$('#selectOrigin').hide();	
+}
+
+function openSetting(){
+	$("#settingDialog").show();
+}
+
+
+
+
+
+

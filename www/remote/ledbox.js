@@ -1,0 +1,1 @@
+var getUrl=window.location,ws=new WebSocket("ws://"+getUrl.host+":50007");function sendCommand(n){ws.send(n)}ws.onmessage=function(n){},ws.onopen=function(){},ws.onclose=function(){},ws.onerror=function(){};
