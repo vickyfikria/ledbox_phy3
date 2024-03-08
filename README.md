@@ -1,7 +1,17 @@
 # This is repository / history log for convert pyhton 2 to python 3 of product ledbox tech4sport
-
+## ledbox/www Web Server : Apache 
 ### Install apache2 and php
-To render php files :
+Install apache2 :
+
+`sudo apt-get install apache2`
+
+To render index.php files, requre to install php :
+
+`sudo apt-get install php`
+
+Check version : 
+`php --version`
+
 Because /ledbox/www use `simplexml_load_file()` that might cause exception , need to install php-xml
 
 currently php version is 8.2, so :
