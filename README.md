@@ -13,7 +13,7 @@ this will return SimpleXML which means simple XML installed
 
 ### Change Defult Directory
 `sudo nano /etc/apache2/site-available/000-default.conf`
-`<VirtualHost *:80>
+```<VirtualHost *:80>
 
 ...
 ...
@@ -24,7 +24,7 @@ DocumentRoot /home/pi/ledbox/www
 
 DirectoryIndex index.php
 
-</VirtualHost>`
+</VirtualHost>```
 
 
 
