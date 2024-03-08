@@ -25,7 +25,8 @@ this will return SimpleXML which means simple XML installed
 
 </VirtualHost>
 ```
-
+> [!IMPORTANT]
+> Make sure that /home/pi (top folder of ledbox/www) is executable.
 
 
 ### Apache Error log
