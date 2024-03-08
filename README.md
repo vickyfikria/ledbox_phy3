@@ -31,4 +31,6 @@ this will return SimpleXML which means simple XML installed
 ### Apache Error log
 `sudo nano /var/log/apache2/error.log`
 
+> [!IMPORTANT]
+> Always `sudo service apache2 restart` after make a change
 
