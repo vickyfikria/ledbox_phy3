@@ -10,4 +10,7 @@ currently php version is 8.2, so :
 
 `php -m | grep SimpleXML`
 this will return SimpleXML which means simple XML installed
+### Apache Error log
+`sudo nano /var/log/apache2/error.log`
+
 
