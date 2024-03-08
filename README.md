@@ -27,11 +27,10 @@ this will return SimpleXML which means simple XML installed
 ```
 > [!IMPORTANT]
 > Make sure that /home/pi (top folder of ledbox/www) is executable.
+> Always `sudo service apache2 restart` after make a change
 
 
 ### Apache Error log
-`sudo nano /var/log/apache2/error.log`
+`sudo nano /var/log/apache2/error.log` usefull to trace error 
 
-> [!IMPORTANT]
-> Always `sudo service apache2 restart` after make a change
 
