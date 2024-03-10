@@ -1,7 +1,7 @@
 # This is repository / history log for convert pyhton 2 to python 3 of product ledbox tech4sport
 ## installation/getserialnumber.py
 
-!serial number [This is data flow to get serial number as response](images/getserialnumber.png)
+![This is data flow to get serial number as response](/images/getserialnumber.png)
 
 
 ## ledbox/www Web Server : Apache 
@@ -28,6 +28,15 @@ this will return SimpleXML which means simple XML installed
 
 ### Change Defult Directory
 Reference [here](https://askubuntu.com/questions/337874/change-apache-document-root-folder-to-secondary-hard-drive)
+`sudo nano /etc/apache2.conf`
+```
+After :
+ <Directory />
+     Options Indexes FollowSymLinks Includes ExecCGI
+     AllowOverride All
+     Require all granted
+ </Directory>
+```
 
 `sudo nano /etc/apache2/sites-available/000-default.conf`
 ```
