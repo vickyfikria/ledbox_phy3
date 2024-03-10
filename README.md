@@ -20,7 +20,11 @@ sudo dpkg -i libssl1.1_1.1.1n-0+deb11u5_armhf.deb
 wget http.us.debian.org/debian/pool/main/g/graphicsmagick/libgraphicsmagick++-q16-12_1.4+really1.3.40-4_armhf.deb
 sudo dpkg -i libgraphicsmagick++-q16-12_1.4+really1.3.40-4_armhf.deb
 ```
-
+> /home/pi/ledbox/bin/flushBuffer : error while loadiing shared libraries libwebp.so.6 
+```
+wget http://ftp.de.debian.org/debian/pool/main/libw/libwebp/libwebp6_0.6.1-2+deb10u1_armhf.deb
+sudo dpkg -i libwebp6_0.6.1-2+deb10u1_armhf.deb
+```
 ## installation/getserialnumber.py
 
 ![This is data flow to get serial number as response](/images/getserialnumber.png)
