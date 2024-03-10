@@ -28,6 +28,8 @@ currently php version is 8.2, so :
 this will return SimpleXML which means simple XML installed
 
 ### Change Defult Directory
+Reference [here](https://askubuntu.com/questions/337874/change-apache-document-root-folder-to-secondary-hard-drive)
+
 `sudo nano /etc/apache2/sites-available/000-default.conf`
 ```
 <VirtualHost *:80>
