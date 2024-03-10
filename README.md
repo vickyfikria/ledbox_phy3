@@ -4,7 +4,7 @@ It has flushBuffer binary file which only provided in 32-bit. You can easily che
 Cannot installed on OS 64bit.
 
 ## RPi 4 and Raspbian OS-lite Bookworm
->./startled from bin folder
+Issue with RaspbianOS 32 Lite : when runnin ./startled
 > /home/pi/ledbox/bin/flushBuffer : error while loadiing shared libraries libcrypto.so.1.1 
 This [reference](https://domoticz.com/forum/viewtopic.php?t=40906) might help
 ```
@@ -14,6 +14,7 @@ sudo dpkg -i libssl1.1_1.1.1n-0+deb11u5_armhf.deb
 > /home/pi/ledbox/bin/flushBuffer : error while loadiing shared libraries libgraphicsmagick++Q16.12.so 
 ```
 wget http.us.debian.org/debian/pool/main/g/graphicsmagick/libgraphicsmagick++-q16-12_1.4+really1.3.40-4_armhf.deb
+sudo dpkg -i libgraphicsmagick++-q16-12_1.4+really1.3.40-4_armhf.deb
 ```
 
 ## installation/getserialnumber.py
