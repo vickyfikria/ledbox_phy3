@@ -1,7 +1,11 @@
 #LedBox python 3 
 ## Tech4sport for RPi 4 : which OS to linstall ?
-It has flushBuffer binary file which only provided in 32-bit. You can easily check with `file flushBuffer   #32`.
-Cannot installed on OS 64bit.
+It has flushBuffer binary file which only provided in 32-bit. You can easily check with CLI command file :
+```
+file flushBuffer
+#32
+```
+Cannot installed on Raspbian OS 64bit.
 
 ## RPi 4 and Raspbian OS-lite Bookworm
 Issue with RaspbianOS 32 Lite : when runnin ./startled
