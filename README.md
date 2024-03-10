@@ -1,11 +1,11 @@
-#LedBox python 3 
-## Tech4sport for RPi 4 : which OS to linstall ?
+# LedBox python 3 
+## Tech4sport for RPi 4 : 64-bit or 32-bit OS ?
 It has flushBuffer binary file which only provided in 32-bit. You can easily check with CLI command file :
 ```
 file flushBuffer
 #32
 ```
-Cannot installed on Raspbian OS 64bit.
+32-bit Raspbian OS required instead of 64-bit.
 
 ## RPi 4 and Raspbian OS-lite Bookworm
 Issue with RaspbianOS 32 Lite : when runnin ./startled
@@ -25,10 +25,26 @@ sudo dpkg -i libgraphicsmagick++-q16-12_1.4+really1.3.40-4_armhf.deb
 wget http://ftp.de.debian.org/debian/pool/main/libw/libwebp/libwebp6_0.6.1-2+deb10u1_armhf.deb
 sudo dpkg -i libwebp6_0.6.1-2+deb10u1_armhf.deb
 ```
+> /home/pi/ledbox/bin/flushBuffer : error while loadiing shared libraries libtiff.so.5 
+```
+wget http://ftp.de.debian.org/debian/pool/main/libw/libwebp/libwebp6_0.6.1-2+deb10u1_armhf.deb
+sudo dpkg -i libwebp6_0.6.1-2+deb10u1_armhf.deb
+```
 ## installation/getserialnumber.py
+### Data flow
 
-![This is data flow to get serial number as response](/images/getserialnumber.png)
+![This is data flow to get serial number as response](/images/getserialnumber_small.png)
 
+### Conversion
+
+1. ConfigParser
+import ConfigParset  #python2
+import configparser  #python3
+
+3. urllib
+import urllib   #python2
+import urllib.request #python3
+Reference [here](https://python-forum.io/thread-15740.html)
 
 ## ledbox/www Web Server : Apache 
 ### Install apache2 and php
