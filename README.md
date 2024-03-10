@@ -1,4 +1,8 @@
 # This is repository / history log for convert pyhton 2 to python 3 of product ledbox tech4sport
+## Tech4sport for RPi 4 : which OS to linstall ?
+It has flushBuffer binary file which only provided in 32-bit. You can easily check with `file flushBuffer   #32`.
+Cannot installed on OS 64bit.
+
 ## RPi 4 and Raspbian OS-lite Bookworm
 when executing ./startled from bin folder it said : 
 /home/pi/ledbox/bin/flushBuffer missing shared library libcrypto.so.1.1 
