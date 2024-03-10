@@ -1,4 +1,14 @@
 # This is repository / history log for convert pyhton 2 to python 3 of product ledbox tech4sport
+## RPi 4 and Raspbian OS-lite Bookworm
+when executing ./startled from bin folder it said : 
+/home/pi/ledbox/bin/flushBuffer missing shared library libcrypto.so.1.1 
+This [reference](https://domoticz.com/forum/viewtopic.php?t=40906) might help
+```
+ wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb11u5_armhf.deb
+sudo dpkg -i libssl1.1_1.1.1n-0+deb11u5_armhf.deb
+```
+
+
 ## installation/getserialnumber.py
 
 ![This is data flow to get serial number as response](/images/getserialnumber.png)
