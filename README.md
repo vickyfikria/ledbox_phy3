@@ -4,8 +4,8 @@ It has flushBuffer binary file which only provided in 32-bit. You can easily che
 Cannot installed on OS 64bit.
 
 ## RPi 4 and Raspbian OS-lite Bookworm
-when executing ./startled from bin folder it said : 
-/home/pi/ledbox/bin/flushBuffer missing shared library libcrypto.so.1.1 
+>./startled from bin folder
+>> /home/pi/ledbox/bin/flushBuffer : error while loadiing shared libraries libcrypto.so.1.1 
 This [reference](https://domoticz.com/forum/viewtopic.php?t=40906) might help
 ```
  wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb11u5_armhf.deb
