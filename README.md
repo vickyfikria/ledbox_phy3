@@ -1,4 +1,4 @@
-# This is repository / history log for convert pyhton 2 to python 3 of product ledbox tech4sport
+#LedBox python 3 
 ## Tech4sport for RPi 4 : which OS to linstall ?
 It has flushBuffer binary file which only provided in 32-bit. You can easily check with `file flushBuffer   #32`.
 Cannot installed on OS 64bit.
