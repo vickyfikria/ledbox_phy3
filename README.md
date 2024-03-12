@@ -27,8 +27,8 @@ sudo dpkg -i libwebp6_0.6.1-2+deb10u1_armhf.deb
 ```
 > /home/pi/ledbox/bin/flushBuffer : error while loadiing shared libraries libtiff.so.5 
 ```
-wget http://ftp.de.debian.org/debian/pool/main/libw/libwebp/libwebp6_0.6.1-2+deb10u1_armhf.deb
-sudo dpkg -i libwebp6_0.6.1-2+deb10u1_armhf.deb
+wget http://ftp.de.debian.org/debian/pool/main/t/tiff/libtiff5_4.2.0-1+deb11u5_armhf.deb
+sudo dpkg -i libtiff5_4.2.0-1+deb11u5_armhf.deb
 ```
 ## installation/getserialnumber.py
 ### Data flow
