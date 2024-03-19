@@ -103,3 +103,18 @@ After :
 `sudo nano /var/log/apache2/error.log` usefull to trace error 
 
 
+## hostapd
+Installation :
+`sudo apt-get install hostapd`
+
+Configure hostapd.conf /etc/hostapd/hostapd
+`sudo nano /etc/hostapd/hostapd.conf`
+
+Run /etc/hostapd/hostapd
+`sudo hostapd /etc/hostapd/hostapd`
+
+Start service hostapd
+`systemctl start hostapd`
+
+Check service hostapd
+`systemctl status hostapd`
