@@ -8,6 +8,10 @@ file flushBuffer
 32-bit Raspbian OS required instead of 64-bit.
 
 ## RPi 4 and Raspbian OS-lite Bookworm
+
+> [!IMPORTANT]
+> library installation not required if we recompile from flushBuffer source
+
 Issue with RaspbianOS 32 Lite : when runnin ./startled
 > /home/pi/ledbox/bin/flushBuffer : error while loadiing shared libraries libcrypto.so.1.1 
 This [reference](https://domoticz.com/forum/viewtopic.php?t=40906) might help
@@ -30,6 +34,10 @@ sudo dpkg -i libwebp6_0.6.1-2+deb10u1_armhf.deb
 wget http://ftp.de.debian.org/debian/pool/main/t/tiff/libtiff5_4.2.0-1+deb11u5_armhf.deb
 sudo dpkg -i libtiff5_4.2.0-1+deb11u5_armhf.deb
 ```
+
+
+
+
 ## installation/getserialnumber.py
 ### Data flow
 
