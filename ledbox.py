@@ -1,9 +1,3 @@
-# uncompyle6 version 3.7.4
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (default, Oct 10 2019, 22:02:15) 
-# [GCC 8.3.0]
-# Embedded file name: ledbox.py
-# Compiled at: 2021-02-18 07:58:54
 import sys, serial, socket, bluetooth, signal, inspect, threading
 from ledboxAPI import ledboxAPI
 import ledboxFileUploadServer, ledboxApp as app, RPi.GPIO as GPIO, time, os, xml.etree.ElementTree as ET, BtAutoPair, importlib, glob, testProcedure
@@ -62,33 +56,55 @@ if __name__ == '__main__':
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(21, GPIO.OUT)
-    app.getNetworkInfo()
-    if app.current_eth_ip == 'nd':
+    app.getNetworkInfo() # Current LAN IP
+                         # Current WIFI IP 
+    if app.current_eth_ip == 'nd': 
         os.system('bin/dhcp')
     language = 'IT'
+
+    # parse configuration file setting.ini and user_setting.ini
     app.Config.read('setting.ini')
     app.UserConfig.read('user_setting.ini')
     
+    # pull width , height value from setting.ini to app.widthOut, app.heightOut
+    # [DISPLAY]
+    # width = 
+    # height =
     if app.Config.has_option('DISPLAY','width'):
         app.widthOut=app.Config.getint('DISPLAY','width')
 
     if app.Config.has_option('DISPLAY','height'):
         app.heightOut=app.Config.getint('DISPLAY','height')
-  
+
+    # pull device, modifier value from user_setting.ini to app.deviceName , app.modifier 
+    # [GENERAL]
+    # device = 
+    # mode =
+    # default_layout = 
+    # [LAYOUT] 
+    # modifier =  
+
     app.deviceName = app.UserConfig.get('GENERAL', 'device')
     app.modifier = app.UserConfig.get('LAYOUT', 'modifier')
+    app.mode = app.UserConfig.get('GENERAL', 'mode')
+    default_layout = app.UserConfig.get('GENERAL', 'default_layout')
+
+
     autopair = BtAutoPair.BtAutoPair()
     autopair.enable_pairing(app.UserConfig.get('BLUETOOTH', 'name'))
+
+    # pull version from manifest.xml to app.version
+
     if os.path.isfile('manifest.xml'):
         tree = ET.parse('manifest.xml').getroot()
         for child in tree:
             if child.tag == 'version':
                 app.version = child.text
 
-    app.mode = app.UserConfig.get('GENERAL', 'mode')
-    default_layout = app.UserConfig.get('GENERAL', 'default_layout')
+    
     if app.Config.getboolean('USB', 'enable') == True:
-        try:
+        try:  
+            print('[USB] enable = 1')
             app.serialUSB = serial.Serial(app.Config.get('USB', 'port'), timeout=0.05)
             app.serialUSB.baudrate = app.Config.getint('USB', 'baud')
         except Exception as e:
@@ -96,10 +112,13 @@ if __name__ == '__main__':
 
     if app.Config.getboolean('USB', 'client') == True:
         app.serialUSBClientConnected = False
+        print("checkPresenceSerial USB")
         checkThred = threading.Thread(target=checkPresenceSerial).start()
     app.LEDMatrix2.offset_x = app.UserConfig.getint('GENERAL', 'offset_x')
     app.LEDMatrix2.offset_y = app.UserConfig.getint('GENERAL', 'offset_y')
     app.API = ledboxAPI()
+
+    print('Load Layout intro')
     app.current_layout = app.layoutManager.loadLayout('intro')
     s = socketStruct()
     s.enable = app.UserConfig.getboolean('BLUETOOTH', 'enable')
@@ -156,10 +175,12 @@ if __name__ == '__main__':
             exit()
 
     try:
-        app.websocket = WebSocketServerClass(50007)
+        app.websocket = WebSocketServerClass() # port 50007 move to WebServerSocketClass because of always error TypeError: got multiple values for argument
         app.thread_websocket = threading.Thread(target=app.websocket.run, args=())
         app.thread_websocket.start()
-    except:
+    except Exception as e:
+        print("Websocket Exception : ")
+        print(e)
         pass
 
     socketThread = []
