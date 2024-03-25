@@ -1,9 +1,3 @@
-# uncompyle6 version 3.7.4
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (default, Oct 10 2019, 22:02:15) 
-# [GCC 8.3.0]
-# Embedded file name: /home/pi/ledbox/ledboxAPI.py
-# Compiled at: 2021-02-18 16:39:42
 import json, os, ledboxApp as app, time, subprocess, ErrorMessage, testProcedure, threading, shutil, layoutManager
 
 class ledboxAPI:
@@ -72,7 +66,11 @@ class ledboxAPI:
     def SetLayout(self, data):
         result = ''
         result_sections = ''
-        if str(type(data['value'])) == "<type 'list'>":
+       
+        if(isinstance( data['value'], list)) :
+        #if str(type(data['value'])) == "<type 'list'>":
+            print ('data[value] is a list')
+            print (data['name'])
             result = app.layoutManager.loadLayout(data['name'])
             if isinstance(result, ErrorMessage.ErrorMessageStruct):
                 return result
@@ -81,10 +79,13 @@ class ledboxAPI:
             if isinstance(result_sections, ErrorMessage.ErrorMessageStruct):
                 return result_sections
         else:
+            #data['value'] = waiting
             result = app.layoutManager.loadLayout(data['value'])
             if isinstance(result, ErrorMessage.ErrorMessageStruct):
                 return result
             app.current_layout = result
+        print ('app.current_layout.name : '+ app.current_layout.name)
+
         return app.current_layout.name
 
     def ReloadLayout(self, data):
