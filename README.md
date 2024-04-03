@@ -126,3 +126,16 @@ Start service hostapd
 
 Check service hostapd
 `systemctl status hostapd`
+
+## ----------------------
+## Fresh Installation
+## ----------------------
+1. Prepare 16GB sdcard
+2. Choose Raspbian OS Bookworm 32-bit lite
+3. update installation
+   `sudo apt-get install`
+4. install apache2
+   `sudo apt-get install apache2`
+5. install git  and copy source firmware
+   `sudo git clone https://github.com/ledbox_phy3.get`
+6.  
