@@ -137,5 +137,17 @@ Check service hostapd
 4. install apache2
    `sudo apt-get install apache2`
 5. install git  and copy source firmware
-   `sudo git clone https://github.com/ledbox_phy3.get`
-6.  
+   `sudo git clone https://github.com/ledbox_phy3.git`
+6.  install graphics library :
+   `sudo apt-get install libgraphicsmagick++-dev libwebp-dev -y`
+7. install serial :
+   `sudo apt-get install python3-serial`
+8. install bluetooth
+   `sudo apt-get install python3-bluez`
+9. install pygame
+    `sudo apt-get install python3-pygame`
+10. install PIL
+`sudo apt-get install python3-pil`
+11. install opencv2
+`sudo apt-get install python3-opencv`
+
