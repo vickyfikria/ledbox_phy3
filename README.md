@@ -150,4 +150,20 @@ Check service hostapd
 `sudo apt-get install python3-pil`
 11. install opencv2
 `sudo apt-get install python3-opencv`
-
+12. install netifaces
+`sudo apt-get install netifaces`
+13. install pexpect
+`sudo apt-get install python3-expect`
+14. install dbus
+`sudo apt-get install python3-expect`
+15. line 275, in advertise_service Bluetooth Error
+check solution in : https://forums.raspberrypi.com/viewtopic.php?t=132470
+`sudo nano /lib/systemd/system/bluetooth.service'
+Change :
+[Service]
+ExecStart=/usr/lib/bluetooth/bluetoothd
+To :
+ExecStart=/usr/lib/bluetooth/bluetoothd --compat
+then `sudo reboot`
+16. _bluetooth.error: (13, 'Permission denied')
+`sudo chmod o+rw /var/run/sdp`
