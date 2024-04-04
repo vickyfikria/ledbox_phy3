@@ -156,6 +156,10 @@ Check service hostapd
 `sudo apt-get install python3-pexpect`
 14. install dbus
 `sudo apt-get install python3-dbus`
+15. 
+This is for autopairing without type anything on raspberry pi side.
+FileNotfoundError : No such file or directory : /usr/local/bin/auto-agent
+`sudo cp ~/ledbox/auto-agent /usr/local/bin`
 
 16. line 275, in advertise_service Bluetooth Error
 check solution in [here](https://forums.raspberrypi.com/viewtopic.php?t=132470)
@@ -172,10 +176,10 @@ then `sudo reboot`
 `sudo chmod o+rw /var/run/sdp`
 need to run that each time booting
 
-19. copy ledbox firmware to home/pi, then launch ledbox.py
+18. copy ledbox firmware to home/pi, then launch ledbox.py
 `python ledbox.py`
 
-21. if nothing show on ledbox,
+19. if nothing show on ledbox,
 need to disable sound card alsa from this [tutorial] (https://www.instructables.com/Disable-the-Built-in-Sound-Card-of-Raspberry-Pi/)
 
 `cd /etc/probe.d`
