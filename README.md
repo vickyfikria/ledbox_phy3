@@ -156,7 +156,8 @@ Check service hostapd
 `sudo apt-get install python3-expect`
 14. install dbus
 `sudo apt-get install python3-expect`
-15. line 275, in advertise_service Bluetooth Error
+
+16. line 275, in advertise_service Bluetooth Error
 check solution in [here](https://forums.raspberrypi.com/viewtopic.php?t=132470)
 
 `sudo nano /lib/systemd/system/bluetooth.service'
@@ -166,12 +167,15 @@ ExecStart=/usr/lib/bluetooth/bluetoothd`
 To :
 `ExecStart=/usr/lib/bluetooth/bluetoothd --compat`
 then `sudo reboot`
+
 17. _bluetooth.error: (13, 'Permission denied')
 `sudo chmod o+rw /var/run/sdp`
 need to run that each time booting
-18. copy ledbox firmware to home/pi, then launch ledbox.py
+
+19. copy ledbox firmware to home/pi, then launch ledbox.py
 `python ledbox.py`
-19. if nothing show on ledbox,
+
+21. if nothing show on ledbox,
 need to disable sound card alsa from this [tutorial] (https://www.instructables.com/Disable-the-Built-in-Sound-Card-of-Raspberry-Pi/)
 
 `cd /etc/probe.d`
