@@ -160,7 +160,7 @@ Check service hostapd
 16. line 275, in advertise_service Bluetooth Error
 check solution in [here](https://forums.raspberrypi.com/viewtopic.php?t=132470)
 
-`sudo nano /lib/systemd/system/bluetooth.service'
+`sudo nano /lib/systemd/system/bluetooth.service`
 Change :
 `[Service]
 ExecStart=/usr/lib/bluetooth/bluetoothd`
