@@ -151,9 +151,9 @@ Check service hostapd
 11. install opencv2
 `sudo apt-get install python3-opencv`
 12. install netifaces
-`sudo apt-get install netifaces`
+`sudo apt-get install python3-netifaces`
 13. install pexpect
-`sudo apt-get install python3-expect`
+`sudo apt-get install python3-pexpect`
 14. install dbus
 `sudo apt-get install python3-dbus`
 
