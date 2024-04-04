@@ -155,7 +155,7 @@ Check service hostapd
 13. install pexpect
 `sudo apt-get install python3-expect`
 14. install dbus
-`sudo apt-get install python3-expect`
+`sudo apt-get install python3-dbus`
 
 16. line 275, in advertise_service Bluetooth Error
 check solution in [here](https://forums.raspberrypi.com/viewtopic.php?t=132470)
