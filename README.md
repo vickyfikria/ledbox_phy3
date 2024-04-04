@@ -175,11 +175,20 @@ then `sudo reboot`
 17. _bluetooth.error: (13, 'Permission denied')
 `sudo chmod o+rw /var/run/sdp`
 need to run that each time booting
+for permanent solution, refer [this link](https://stackoverflow.com/questions/34599703/rfcomm-bluetooth-permission-denied-error-raspberry-pi)
 
-18. copy ledbox firmware to home/pi, then launch ledbox.py
+1. make sure your pi user is in the bluetooth group:
+```$ cat /etc/group | grep bluetooth
+bluetooth:x:113:pi```
+1.1. If it's not, add `pi` to `bluetooth` group:
+`$ sudo usermod -G bluetooth -a pi`
+2.Change group of the `/var/run/sdp` file:
+`$ sudo chgrp bluetooth /var/run/sdp`
+
+19. copy ledbox firmware to home/pi, then launch ledbox.py
 `python ledbox.py`
 
-19. if nothing show on ledbox,
+20. if nothing show on ledbox,
 need to disable sound card alsa from this [tutorial] (https://www.instructables.com/Disable-the-Built-in-Sound-Card-of-Raspberry-Pi/)
 
 `cd /etc/probe.d`
