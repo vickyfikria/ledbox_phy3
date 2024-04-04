@@ -78,7 +78,7 @@ this will return SimpleXML which means simple XML installed
 
 ### Change Defult Directory
 Reference [here](https://askubuntu.com/questions/337874/change-apache-document-root-folder-to-secondary-hard-drive)
-`sudo nano /etc/apache2.conf`
+`sudo nano /etc/apache2/apache2.conf`
 ```
 After :
  <Directory />
