@@ -194,4 +194,18 @@ need to disable sound card alsa from this [tutorial] (https://www.instructables.
 `cd /etc/probe.d`
 `vi alsa-blacklist.conf`
 
+21. Wifi access point setting [reference](https://forums.raspberrypi.com/viewtopic.php?t=358481)
+add this to /ledbox/installation_disabled/install
+```
+        nmcli con add type wifi ifname wlan0 mode ap con-name apledbox ssid "$WIFI_AP_SSID"
+        nmcli con modify apledbox 802-11-wireless.band bg
+        nmcli con modify apledbox 802-11-wireless.channel 1
+        nmcli con modify apledbox 802-11-wireless-security.key-mgmt wpa-psk
+        nmcli con modify apledbox 802-11-wireless-security.psk "$WIFI_AP_PASSWORD"
+        nmcli con modify apledbox ipv4.addr 172.24.1.1/24
+        nmcli con modify apledbox ipv4.method shared
+        nmcli con up apledbox
+ ```
+
+
 
