@@ -12,8 +12,8 @@ thread_check = None
 base = 'http://ledbox.tech4sport.com/'
 
 def run(onlineVerify=False):
-    #app.isTestMode = True
-    #app.Debug('RUN TEST LEDbox')
+    app.isTestMode = True
+    app.Debug('RUN TEST LEDbox')
     print('#1')
     testDisplay()
     print('#2')
@@ -38,6 +38,7 @@ def checkDeviceVerification():
         # son['device']['verified'] = 0 means not yet verified by admin
         # son['device']['verified'] = 1 means already confirm by admin
         # through https://ledbox.tech4sport.com/index.php?view=listDevices  admin page 
+	# if this ledbox not yet verified by admin, keep testing sequence testDisplay > testSerialCable >    
         if son['device']['verified'] == 0:
             print(f' {app.deviceName} is verified')
             run(True)
