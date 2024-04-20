@@ -1,9 +1,3 @@
-# uncompyle6 version 3.7.4
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (default, Oct 10 2019, 22:02:15) 
-# [GCC 8.3.0]
-# Embedded file name: /home/pi/ledbox/LEDMatrix2.py
-# Compiled at: 2021-02-18 08:56:42
 from PIL import Image, ImageFile, ImageFont, ImageDraw
 import time, ledboxApp as app, threading, cv2, os, mimetypes, copy
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -47,8 +41,8 @@ def printLayout():
         buffer_compressed.save('www/buffer_compressed.png', quality=95)
         return buffer
     except Exception as e:
-        app.Debug(str(e))
-        print (e)
+        print('Line 50 , Func printLayout, Exception ' + str(e)) #app.Debug(str(e))
+
 
 
 def printText(section, img):
@@ -191,19 +185,20 @@ def printMedia(section, img):
             if section.align == 'left':
                 off_align_x = 0
             if section.align == 'center':
-                off_align_x = -img_to_paste.width / 2
+                off_align_x = -img_to_paste.width // 2 # / cause TypeError exception
             if section.align == 'right':
                 off_align_x = -img_to_paste.width
             if section.valign == 'top':
                 off_align_y = 0
             if section.valign == 'center':
-                off_align_y = -img_to_paste.height / 2
+                off_align_y = -img_to_paste.height // 2 # / cause TypeError exception
             if section.valign == 'bottom':
                 off_align_y = -img_to_paste.height
             img.paste(img_to_paste, (offset_x + section.getx() + off_align_x, offset_y + section.gety() + off_align_y))
         except Exception as e:
-            app.Debug('Print media ' + str(e))
+            print('Line 206 , Func printMedia , Exception ' + str(e)) #app.Debug('Print media ' + str(e))
             section.frame = 0
+
 
         return img
 
@@ -298,4 +293,3 @@ def calculateLenghtText(text, fontsize):
 
 
 thread_ledmatrix = threading.Thread(target=run, args=())
-# global tmp_second ## Warning: Unused global
