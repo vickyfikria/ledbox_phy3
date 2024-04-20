@@ -82,13 +82,14 @@ function htmlMenu($current_view){
     return $html;
 }
 
-addMenu("MENU","","","");
-addMenu("Dashboard","index.php?view=dashboard","nav-icon fas fa-tachometer-alt","dashboard");
-addMenu("Settings","index.php?view=setting","nav-icon fas fa-cog","setting");
-addMenu("Layouts","index.php?view=listlayout","nav-icon fas fa-layer-group","listlayout,editlayout");
-addMenu("Media","index.php?view=gallery","nav-icon fas fa-images","gallery");
-addMenu("Remotes","index.php?view=remotes","nav-icon fas fa-mobile","remotes");
-addMenu("Plugins","index.php?view=listplugin","nav-icon fas fa-puzzle-piece","plugins");
+//addMenu('MENU','','','');
+//addMenu("Dashboard","index.php?view=dashboard","nav-icon fas fa-tachometer-alt","dashboard");
+//addMenu("Settings","index.php?view=setting","nav-icon fas fa-cog","setting");
+//addMenu("Layouts","index.php?view=listlayout","nav-icon fas fa-layer-group","listlayout,editlayout");
+//addMenu("Media","index.php?view=gallery","nav-icon fas fa-images","gallery");
+//addMenu("Remotes","index.php?view=remotes","nav-icon fas fa-mobile","remotes");
+//addMenu("Plugins","index.php?view=listplugin","nav-icon fas fa-puzzle-piece","plugins");
+
 
 function render($html,$current_view,$title=""){
     
@@ -105,7 +106,7 @@ function render($html,$current_view,$title=""){
     
     $t= str_replace("<bodyheader/>", $title, $t);
     $t= str_replace("<serialnumber/>", $GLOBALS['serialnumber'],$t);
-    $t= str_replace("<menu/>", htmlMenu($current_view), $t);
+    //$t= str_replace("<menu/>", htmlMenu($current_view), $t);
     
     $t= str_replace("<operator/>", $_SESSION['operator'], $t);
     
