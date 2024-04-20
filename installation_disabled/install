@@ -46,7 +46,16 @@ else
 	sudo sed -i "2i127.0.0.1 $WIFI_AP_SSID" /ect/hosts
 	cp hostapd.conf hostapd.conf1
 	cp user_setting.ini user_setting.ini1
-	
+
+        nmcli con add type wifi ifname wlan0 mode ap con-name apledbox ssid "$WIFI_AP_SSID"
+        nmcli con modify apledbox 802-11-wireless.band bg
+        nmcli con modify apledbox 802-11-wireless.channel 1
+        nmcli con modify apledbox 802-11-wireless-security.key-mgmt wpa-psk
+        nmcli con modify apledbox 802-11-wireless-security.psk "$WIFI_AP_PASSWORD"
+        nmcli con modify apledbox ipv4.addr 172.24.1.1/24
+        nmcli con modify apledbox ipv4.method shared
+        nmcli con up apledbox
+
 	perl -p -i.bak -e 's/ssid=SSID/ssid='$WIFI_AP_SSID'/' hostapd.conf1
 	perl -p -i.bak -e 's/wpa_passphrase=PASSWORD/wpa_passphrase='$WIFI_AP_PASSWORD'/' hostapd.conf1
 	
@@ -63,14 +72,11 @@ else
 	echo "SSID WIFI AP: " $WIFI_AP_SSID
 	echo "PASSWORD WIFI AP: " $WIFI_AP_PASSWORD
 
-	
-
 fi
 
-
 sudo rm -r ../installation
-chmod +x ../bin/onlineupdate
-../bin/onlineupdate
+#chmod +x ../bin/onlineupdate
+#../bin/onlineupdate
 
 sudo reboot
 
