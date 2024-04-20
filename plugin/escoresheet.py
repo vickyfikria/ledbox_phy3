@@ -1,9 +1,3 @@
-# uncompyle6 version 3.7.4
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (default, Oct 10 2019, 22:02:15) 
-# [GCC 8.3.0]
-# Embedded file name: plugin/escoresheet.py
-# Compiled at: 2021-02-18 17:27:00
 import binascii, json, ledboxApp as app, time, threading
 from LedboxPlugin import LedboxPlugin
 import ErrorMessage
@@ -40,21 +34,33 @@ class escoresheetPlugin(LedboxPlugin):
         return p_message
 
     def onAfterMessageProcess(self, message, client):
-        message_bytes = bytearray(message)
+        print('onAfterMessageProcess, escoresheet')
+        #print(message)
+        message_bytes = message #bytearray(message)
+        #print(message_bytes)
         self.__clientname = client.socket.name
         if self._checkProtocol(message_bytes):
-            end = binascii.hexlify(message_bytes[len(message_bytes) - 2:len(message_bytes)])
-            if end == 'ff0a':
+            end = binascii.hexlify(message_bytes[len(message_bytes) - 2:len(message_bytes)]).decode()
+            print('[checkProtocol] end word   :' + str(end))
+
+            if end == 'ff0a' or end == '00ff':
                 message_bytes = message_bytes[:len(message_bytes) - 2]
             subdivide = 32
             if self._type_protocol == 'ledbox':
+                subdivide = 96
+            if self._type_protocol == 'ledbox_new':
+                print('onAfterMessagges, add 4 bytes prefix aa-aa-aa-1c ' )
+                message_bytes = b'\xaa\xaa\xaa\x1c'+ message_bytes
+                print(message_bytes)
                 subdivide = 96
             if self._type_protocol == 'litescore':
                 subdivide = 32
             messages = self._subdivideMessage(message_bytes, subdivide)
             result = None
             for m in messages:
-                app.Debug('MESSAGE SPLIT: ' + binascii.hexlify(m) + '\n' + self._debug(m, subdivide))
+                #app.Debug('MESSAGE SPLIT: ' + binascii.hexlify(m) + '\n' + self._debug(m, subdivide)) #cannot concatenate str to bytes
+                #print('onAfterMessageProcess, m in messages :')
+                #print(m) 
                 result = self._processMessage(m)
 
             app.resendMessageBroadcast(message, app.getClientById(self._clientid), False, 'ledbox')
@@ -65,6 +71,7 @@ class escoresheetPlugin(LedboxPlugin):
 
     def _subdivideMessage(self, messageBytes, limit):
         messages = []
+        #print('subdivideMessage, escoresheet. next is message list ')
         if len(messageBytes) <= limit:
             messages.append(messageBytes)
             return messages
@@ -77,21 +84,30 @@ class escoresheetPlugin(LedboxPlugin):
                 stop = stop + limit
             else:
                 stop = len(messageBytes)
-
+        #print(messages)
         return messages
 
     def _checkProtocol(self, message_bytes):
-        start = binascii.hexlify(message_bytes[1:3])
-        end = binascii.hexlify(message_bytes[len(message_bytes) - 2:len(message_bytes)])
+        start = binascii.hexlify(message_bytes[1:3]).decode()
+        end = binascii.hexlify(message_bytes[len(message_bytes) - 2:len(message_bytes)]).decode()
+        print(f'start word : {str(start)} , end word   : {str(end)}')
+        self._type_protocol = 'ledbox'
+        if start == '1010' or start == '0010' or start == '0000':
+            if end == '00ff' or end == 'ff0a':
+                self._type_protocol = 'ledbox_new'
+                print("Type Protocol Ledbox_new")
+                return True
         if start == 'aaaa' and (end == '5555' or end == '00ff' or end == 'ff0a'):
             if end == '5555':
                 self._type_protocol = 'litescore'
             if end == '00ff' or end == 'ff0a':
                 self._type_protocol = 'ledbox'
+                print("Type Protocol Ledbox")
             return True
         return False
 
     def _parseMessageLedbox(self, message_bytes):
+        print('[escoreshee] _parseMessageLedbox - start')
         Dsy_0 = bin(int(message_bytes[4]))[2]
         Dsy_1 = bin(int(message_bytes[5]))[2]
         Dsy_2 = bin(int(message_bytes[6]))[2]
@@ -114,6 +130,14 @@ class escoresheetPlugin(LedboxPlugin):
         Horn = bin(int(message_bytes[23]))[2]
         Dsy_8 = bin(int(message_bytes[28]))[2]
         Dsy_9 = bin(int(message_bytes[29]))[2]
+        print(f'Dsy_0 - message_bytes[4] : {message_bytes[4]}')
+        print(f'Dsy_1 - message_bytes[5] : {message_bytes[5]}')
+
+        print(f'{Dsy_0} {Dsy_1} {Dsy_2} {Dsy_3} {Dsy_1_1}')
+        print(f'{Ads_1} {Ads_2} {Ads_3} {Ads_4} {Ads_5} {Ads_6} {Dsy_1_2}')
+        print(f'Dsy_6 : {Dsy_6}, Dsy_7 : {Dsy_7}, Dsy_8 : {Dsy_8}, Dsy_9 : {Dsy_9}')
+
+        print('[escoreshee] _parseMessageLedbox - #1')
         event = 'default'
         if int(message_bytes[83]) == 1:
             self._software = 'indoor'
@@ -145,13 +169,17 @@ class escoresheetPlugin(LedboxPlugin):
                 event = 'challenge'
             if int(message_bytes[84]) == 12:
                 event = 'countdown'
+        print(f'software {self._software}, event {event} ')
         '''
         if self._software == 'outdoor':
             if event == 'default' and int(Line_L) == 0 and int(Line_R) == 0:
                 event = 'countdown'
         '''
-        code_team1 = str(message_bytes[33:36])
-        name_team1 = str(message_bytes[39:54]).replace('\x00', '').strip()
+        #code_team1 = str(message_bytes[33:36])
+        code_team1 = message_bytes[33:36].decode()
+
+        #name_team1 = str(message_bytes[39:54]).replace('\x00', '').strip()
+        name_team1 = message_bytes[39:54].decode().replace('\x00', '').strip()
         r, g, b = (0, 0, 0)
         
         r = int(message_bytes[54])
@@ -164,8 +192,15 @@ class escoresheetPlugin(LedboxPlugin):
             g = 150
             b = 150
         color_team1 = str(r) + ',' + str(g) + ',' + str(b)
-        code_team2 = str(message_bytes[58:61])
-        name_team2 = str(message_bytes[64:79]).replace('\x00', '').strip()
+
+        print(f'code_team1 {code_team1}, name_team1 {name_team1} , r {r} , g {g}, b {b}, color_team1 : {color_team1}')
+
+        #code_team2 = str(message_bytes[58:61])
+        code_team2 = message_bytes[58:61].decode()
+
+        #name_team2 = str(message_bytes[64:79]).replace('\x00', '').strip()
+        name_team2 = message_bytes[64:79].decode().replace('\x00', '').strip()
+
         r, g, b = (0, 0, 0)
         
        
@@ -179,6 +214,9 @@ class escoresheetPlugin(LedboxPlugin):
             g = 150
             b = 150
         color_team2 = str(r) + ',' + str(g) + ',' + str(b)
+
+        print(f' code_team2 {code_team2}, name_team2 {name_team1} , r {r} , g {g}, b {b}')
+
         if event == 'show_serve' and message_bytes[12] == 48 and message_bytes[14] == 0:
             player = message_bytes[25]
             return {'cmd': 'show_serve', 'software': self._software, 
@@ -198,9 +236,9 @@ class escoresheetPlugin(LedboxPlugin):
         if event == 'timeout':
             team_countdown = 1
             t = 60
-            if binascii.hexlify(message_bytes[12:13]) == '30':
+            if binascii.hexlify(message_bytes[12:13]).decode() == '30':
                 team_countdown = 1
-            if binascii.hexlify(message_bytes[14:15]) == '30':
+            if binascii.hexlify(message_bytes[14:15]).decode() == '30':
                 team_countdown = 2
             if self._software == 'outdoor':
                 t = str(message_bytes[26])
@@ -213,9 +251,9 @@ class escoresheetPlugin(LedboxPlugin):
                'team': team_countdown}
         if event == 'challenge':
             team_challenge = 1
-            if binascii.hexlify(message_bytes[12:13]) == '30':
+            if binascii.hexlify(message_bytes[12:13]).decode() == '30':
                 team_challenge = 1
-            if binascii.hexlify(message_bytes[14:15]) == '30':
+            if binascii.hexlify(message_bytes[14:15]).decode() == '30':
                 team_challenge = 2
             return {'cmd': 'challenge', 'software': self._software, 
                'team': team_challenge}
@@ -260,8 +298,9 @@ class escoresheetPlugin(LedboxPlugin):
 
 
 
-            teamname1 = str(teamname1.decode('latin1').encode('utf8'))
-            teamname2 = str(teamname2.decode('latin1').encode('utf8'))
+            #teamname1 = str(teamname1.decode('latin1').encode('utf8'))
+            #teamname2 = str(teamname2.decode('latin1').encode('utf8'))
+            print(f' teamname1 : {teamname1}, teamname2 : {teamname2}')
             return {'software': self._software, 'team1': teamname1, 
                'team2': teamname2, 
                'color1': color_team1, 
@@ -398,18 +437,25 @@ class escoresheetPlugin(LedboxPlugin):
                        'horn': horn}
                 '''
         except Exception as e:
-            print 'ERROR parse message escoresheet ' + str(e)
+            print ('ERROR parse message escoresheet ' + str(e))
 
     def _processMessage(self, message_bytes):
         protocol_ledbox = False
+        protocol_ledbox_new = False
+        print('escoresheet processMessage len(message_bytes) : ' + str(len(message_bytes)))
         if len(message_bytes) > 32:
             protocol_ledbox = True
+            protocol_ledbox_new = True
+
         try:
             if len(message_bytes) > 0:
-                if protocol_ledbox:
+                if protocol_ledbox or protocol_ledbox_new:
                     result = self._parseMessageLedbox(message_bytes)
                 else:
                     result = self._parseMessageLitescore(message_bytes)
+                print('escoresheet parse result')
+                print(result)
+
                 if result == None:
                     return
                 layout_matchscore = self._config.get('PARAMETERS', 'layout_matchscore_' + result['software'])
@@ -417,7 +463,7 @@ class escoresheetPlugin(LedboxPlugin):
                 self._count_timeout = self._config.getint('PARAMETERS', 'timeout_' + result['software'])
                 if result['cmd'] == 'timeout':
                     data = {}
-                    if protocol_ledbox:
+                    if protocol_ledbox or protocol_ledbox_new :
                         data['cmd'] = 'SetLayout'
                         data['name'] = layout_matchscore
                         data['value'] = []
@@ -572,7 +618,7 @@ class escoresheetPlugin(LedboxPlugin):
                 json_data = str(json.dumps(data))
                 app.resendMessageBroadcast(json_data, app.getClientById(self._clientid), True, '', True)
         except Exception as e:
-            print 'ERROR process message escoresheet ' + str(e)
+            print ('ERROR process message escoresheet ' + str(e))
 
         return
 
