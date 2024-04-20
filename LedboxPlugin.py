@@ -1,10 +1,3 @@
-# uncompyle6 version 3.7.4
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (default, Oct 10 2019, 22:02:15) 
-# [GCC 8.3.0]
-# Embedded file name: /home/pi/ledbox/LedboxPlugin.py
-# Compiled at: 2021-02-18 07:58:54
-import inspect, string, ConfigParser, os
 
 class LedboxPlugin:
     __name = ''
@@ -13,7 +6,7 @@ class LedboxPlugin:
     _clientid = ''
 
     def __init__(self, version):
-        self.__name = string.replace(self.__class__.__name__, 'Plugin', '')
+        self.__name = str.replace(self.__class__.__name__, 'Plugin', '')
         self.__version = version
         self._setConfig()
 
@@ -44,5 +37,5 @@ class LedboxPlugin:
 
     def _setConfig(self):
         if os.path.exists('plugin/' + self.__name + '.ini'):
-            self.__config = ConfigParser.ConfigParser()
+            self.__config = configparser.ConfigParser()
             self.__config.read('plugin/' + self.__name + '.ini')
