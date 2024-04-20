@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="template/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css"> 
 
   <!-- Bootstrap Tree View -->
-  <link rel="stylesheet" href="template/plugins/bootstrap-treeview/2bootstrap-treeview.min.css"> 
+  <link rel="stylesheet" href="template/plugins/bootstrap-treeview/bootstrap-treeview.min.css"> 
 
 
   <!-- Google Font: Source Sans Pro -->
@@ -79,7 +79,63 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <menu/>
+         <li class="nav-header">
+           MENU
+         </li>
+         <li class="nav-item">
+          <a href="index.php?view=dashboard" class="nav-link">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+              Dashboard
+            </p>
+          </a>
+        </li>
+         <li class="nav-item">
+          <a href="index.php?view=setting" class="nav-link">
+            <i class="nav-icon fas fa-cog"></i>
+            <p>
+              Settings
+            </p>
+          </a>
+        </li>
+         <li class="nav-item">
+          <a href="index.php?view=listlayout" class="nav-link">
+            <i class="nav-icon fas fa-layer-group"></i>
+            <p>
+              Layouts
+            </p>
+          </a>
+        </li>
+         <li class="nav-item">
+          <a href="index.php?view=gallery" class="nav-link">
+            <i class="nav-icon fas fa-images"></i>
+            <p>
+              Media
+            </p>
+          </a>
+        </li>
+        </li>
+         <li class="nav-item">
+          <a href="index.php?view=remotes" class="nav-link">
+            <i class="nav-icon fas fa-mobile"></i>
+            <p>
+              Remotes
+            </p>
+          </a>
+        </li>
+        </li>
+         <li class="nav-item">
+          <a href="index.php?view=listplugin" class="nav-link">
+            <i class="nav-icon fas fa-puzzle-piece"></i>
+            <p>
+              Plugins
+            </p>
+          </a>
+        </li>
+
+
+
+
           
          <li class="nav-header">
            SERVICE
@@ -210,7 +266,7 @@
 var c = document.getElementById("cbuffer");
 var ctx = c.getContext("2d");
 
-setInterval(function() {
+/*setInterval(function() {
     var myImageElement = document.getElementById('buffer');
     myImageElement.src = 'buffer.png?rand=' + Math.random();
     myImageElement.onload = function() {
@@ -221,7 +277,7 @@ setInterval(function() {
     });
 
 
-}, 2000);
+}, 2000);*/
 
 function showInfo(){
   var message={}
