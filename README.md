@@ -132,7 +132,7 @@ Check service hostapd
 ## ----------------------
 ## Fresh Installation
 ## ----------------------
-1. Prepare 16GB sdcard
+1. Prepare 8GB sdcard
 2. Choose Raspbian OS Bookworm 32-bit lite
 3. update installation
    `sudo apt-get install`
