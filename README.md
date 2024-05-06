@@ -1,5 +1,5 @@
 # LedBox python 3 
-[](/images/escoresheet_scoring.png)
+![](/images/escoresheet_scoring.png)
 
 ## Tech4sport for RPi 4 : 64-bit or 32-bit OS ?
 It has flushBuffer binary file which only provided in 32-bit. You can easily check with CLI command file :
